@@ -8,7 +8,7 @@ import { FileUpload } from './FileUpload';
 import confetti from 'canvas-confetti';
 
 // Google Apps Script URL
-const GAS_DEPLOYMENT_URL = 'https://script.google.com/macros/s/AKfycby-sFR7nFqI0qho5WsoyH33zm_FC9SySSaaNOGRdTNCScYgwcQzf6Gr7XHr3sNVzm7NNg/exec';
+const GAS_DEPLOYMENT_URL = 'https://script.google.com/macros/s/AKfycbz2eB8mp8FjVqZUyDX3IvZSxw4X7p7YdvZne42JTOSpkGXSWAjW-SOQPabrl7jV3MC9/exec';
 
 // Mock booked slots
 const BOOKED_SLOTS = [
@@ -16,44 +16,223 @@ const BOOKED_SLOTS = [
   { date: 'Wednesday, January 28', time: '02:00 PM' }
 ];
 
-// Popular country codes with flags
+// Comprehensive country codes with flags (expanded to all countries)
 const COUNTRY_CODES = [
   { code: '+1', country: 'US', flag: '🇺🇸', name: 'United States' },
-  { code: '+44', country: 'GB', flag: '🇬🇧', name: 'United Kingdom' },
-  { code: '+880', country: 'BD', flag: '🇧🇩', name: 'Bangladesh' },
-  { code: '+91', country: 'IN', flag: '🇮🇳', name: 'India' },
-  { code: '+92', country: 'PK', flag: '🇵🇰', name: 'Pakistan' },
-  { code: '+86', country: 'CN', flag: '🇨🇳', name: 'China' },
-  { code: '+81', country: 'JP', flag: '🇯🇵', name: 'Japan' },
-  { code: '+82', country: 'KR', flag: '🇰🇷', name: 'South Korea' },
-  { code: '+49', country: 'DE', flag: '🇩🇪', name: 'Germany' },
-  { code: '+33', country: 'FR', flag: '🇫🇷', name: 'France' },
-  { code: '+39', country: 'IT', flag: '🇮🇹', name: 'Italy' },
-  { code: '+34', country: 'ES', flag: '🇪🇸', name: 'Spain' },
+  { code: '+1', country: 'CA', flag: '🇨🇦', name: 'Canada' },
   { code: '+7', country: 'RU', flag: '🇷🇺', name: 'Russia' },
-  { code: '+61', country: 'AU', flag: '🇦🇺', name: 'Australia' },
-  { code: '+64', country: 'NZ', flag: '🇳🇿', name: 'New Zealand' },
-  { code: '+27', country: 'ZA', flag: '🇿🇦', name: 'South Africa' },
   { code: '+20', country: 'EG', flag: '🇪🇬', name: 'Egypt' },
-  { code: '+234', country: 'NG', flag: '🇳🇬', name: 'Nigeria' },
-  { code: '+254', country: 'KE', flag: '🇰🇪', name: 'Kenya' },
-  { code: '+971', country: 'AE', flag: '🇦🇪', name: 'UAE' },
-  { code: '+966', country: 'SA', flag: '🇸🇦', name: 'Saudi Arabia' },
-  { code: '+90', country: 'TR', flag: '🇹🇷', name: 'Turkey' },
-  { code: '+60', country: 'MY', flag: '🇲🇾', name: 'Malaysia' },
-  { code: '+65', country: 'SG', flag: '🇸🇬', name: 'Singapore' },
-  { code: '+66', country: 'TH', flag: '🇹🇭', name: 'Thailand' },
-  { code: '+84', country: 'VN', flag: '🇻🇳', name: 'Vietnam' },
-  { code: '+62', country: 'ID', flag: '🇮🇩', name: 'Indonesia' },
-  { code: '+63', country: 'PH', flag: '🇵🇭', name: 'Philippines' },
+  { code: '+27', country: 'ZA', flag: '🇿🇦', name: 'South Africa' },
+  { code: '+30', country: 'GR', flag: '🇬🇷', name: 'Greece' },
+  { code: '+31', country: 'NL', flag: '🇳🇱', name: 'Netherlands' },
+  { code: '+32', country: 'BE', flag: '🇧🇪', name: 'Belgium' },
+  { code: '+33', country: 'FR', flag: '🇫🇷', name: 'France' },
+  { code: '+34', country: 'ES', flag: '🇪🇸', name: 'Spain' },
+  { code: '+36', country: 'HU', flag: '🇭🇺', name: 'Hungary' },
+  { code: '+39', country: 'IT', flag: '🇮🇹', name: 'Italy' },
+  { code: '+40', country: 'RO', flag: '🇷🇴', name: 'Romania' },
+  { code: '+41', country: 'CH', flag: '🇨🇭', name: 'Switzerland' },
+  { code: '+43', country: 'AT', flag: '🇦🇹', name: 'Austria' },
+  { code: '+44', country: 'GB', flag: '🇬🇧', name: 'United Kingdom' },
+  { code: '+45', country: 'DK', flag: '🇩🇰', name: 'Denmark' },
+  { code: '+46', country: 'SE', flag: '🇸🇪', name: 'Sweden' },
+  { code: '+47', country: 'NO', flag: '🇳🇴', name: 'Norway' },
+  { code: '+48', country: 'PL', flag: '🇵🇱', name: 'Poland' },
+  { code: '+49', country: 'DE', flag: '🇩🇪', name: 'Germany' },
+  { code: '+51', country: 'PE', flag: '🇵🇪', name: 'Peru' },
   { code: '+52', country: 'MX', flag: '🇲🇽', name: 'Mexico' },
-  { code: '+55', country: 'BR', flag: '🇧🇷', name: 'Brazil' },
+  { code: '+53', country: 'CU', flag: '🇨🇺', name: 'Cuba' },
   { code: '+54', country: 'AR', flag: '🇦🇷', name: 'Argentina' },
+  { code: '+55', country: 'BR', flag: '🇧🇷', name: 'Brazil' },
   { code: '+56', country: 'CL', flag: '🇨🇱', name: 'Chile' },
   { code: '+57', country: 'CO', flag: '🇨🇴', name: 'Colombia' },
-  { code: '+51', country: 'PE', flag: '🇵🇪', name: 'Peru' },
-  { code: '+1', country: 'CA', flag: '🇨🇦', name: 'Canada' }
+  { code: '+58', country: 'VE', flag: '🇻🇪', name: 'Venezuela' },
+  { code: '+60', country: 'MY', flag: '🇲🇾', name: 'Malaysia' },
+  { code: '+61', country: 'AU', flag: '🇦🇺', name: 'Australia' },
+  { code: '+62', country: 'ID', flag: '🇮🇩', name: 'Indonesia' },
+  { code: '+63', country: 'PH', flag: '🇵🇭', name: 'Philippines' },
+  { code: '+64', country: 'NZ', flag: '🇳🇿', name: 'New Zealand' },
+  { code: '+65', country: 'SG', flag: '🇸🇬', name: 'Singapore' },
+  { code: '+66', country: 'TH', flag: '🇹🇭', name: 'Thailand' },
+  { code: '+81', country: 'JP', flag: '🇯🇵', name: 'Japan' },
+  { code: '+82', country: 'KR', flag: '🇰🇷', name: 'South Korea' },
+  { code: '+84', country: 'VN', flag: '🇻🇳', name: 'Vietnam' },
+  { code: '+86', country: 'CN', flag: '🇨🇳', name: 'China' },
+  { code: '+90', country: 'TR', flag: '🇹🇷', name: 'Turkey' },
+  { code: '+91', country: 'IN', flag: '🇮🇳', name: 'India' },
+  { code: '+92', country: 'PK', flag: '🇵🇰', name: 'Pakistan' },
+  { code: '+93', country: 'AF', flag: '🇦🇫', name: 'Afghanistan' },
+  { code: '+94', country: 'LK', flag: '🇱🇰', name: 'Sri Lanka' },
+  { code: '+95', country: 'MM', flag: '🇲🇲', name: 'Myanmar' },
+  { code: '+98', country: 'IR', flag: '🇮🇷', name: 'Iran' },
+  { code: '+212', country: 'MA', flag: '🇲🇦', name: 'Morocco' },
+  { code: '+213', country: 'DZ', flag: '🇩🇿', name: 'Algeria' },
+  { code: '+216', country: 'TN', flag: '🇹🇳', name: 'Tunisia' },
+  { code: '+218', country: 'LY', flag: '🇱🇾', name: 'Libya' },
+  { code: '+220', country: 'GM', flag: '🇬🇲', name: 'Gambia' },
+  { code: '+221', country: 'SN', flag: '🇸🇳', name: 'Senegal' },
+  { code: '+222', country: 'MR', flag: '🇲🇷', name: 'Mauritania' },
+  { code: '+223', country: 'ML', flag: '🇲🇱', name: 'Mali' },
+  { code: '+224', country: 'GN', flag: '🇬🇳', name: 'Guinea' },
+  { code: '+225', country: 'CI', flag: '🇨🇮', name: 'Ivory Coast' },
+  { code: '+226', country: 'BF', flag: '🇧🇫', name: 'Burkina Faso' },
+  { code: '+227', country: 'NE', flag: '🇳🇪', name: 'Niger' },
+  { code: '+228', country: 'TG', flag: '🇹🇬', name: 'Togo' },
+  { code: '+229', country: 'BJ', flag: '🇧🇯', name: 'Benin' },
+  { code: '+230', country: 'MU', flag: '🇲🇺', name: 'Mauritius' },
+  { code: '+231', country: 'LR', flag: '🇱🇷', name: 'Liberia' },
+  { code: '+232', country: 'SL', flag: '🇸🇱', name: 'Sierra Leone' },
+  { code: '+233', country: 'GH', flag: '🇬🇭', name: 'Ghana' },
+  { code: '+234', country: 'NG', flag: '🇳🇬', name: 'Nigeria' },
+  { code: '+235', country: 'TD', flag: '🇹🇩', name: 'Chad' },
+  { code: '+236', country: 'CF', flag: '🇨🇫', name: 'Central African Republic' },
+  { code: '+237', country: 'CM', flag: '🇨🇲', name: 'Cameroon' },
+  { code: '+238', country: 'CV', flag: '🇨🇻', name: 'Cape Verde' },
+  { code: '+239', country: 'ST', flag: '🇸🇹', name: 'Sao Tome and Principe' },
+  { code: '+240', country: 'GQ', flag: '🇬🇶', name: 'Equatorial Guinea' },
+  { code: '+241', country: 'GA', flag: '🇬🇦', name: 'Gabon' },
+  { code: '+242', country: 'CG', flag: '🇨🇬', name: 'Republic of the Congo' },
+  { code: '+243', country: 'CD', flag: '🇨🇩', name: 'Democratic Republic of the Congo' },
+  { code: '+244', country: 'AO', flag: '🇦🇴', name: 'Angola' },
+  { code: '+245', country: 'GW', flag: '🇬🇼', name: 'Guinea-Bissau' },
+  { code: '+246', country: 'IO', flag: '🇮🇴', name: 'British Indian Ocean Territory' },
+  { code: '+248', country: 'SC', flag: '🇸🇨', name: 'Seychelles' },
+  { code: '+249', country: 'SD', flag: '🇸🇩', name: 'Sudan' },
+  { code: '+250', country: 'RW', flag: '🇷🇼', name: 'Rwanda' },
+  { code: '+251', country: 'ET', flag: '🇪🇹', name: 'Ethiopia' },
+  { code: '+252', country: 'SO', flag: '🇸🇴', name: 'Somalia' },
+  { code: '+253', country: 'DJ', flag: '🇩🇯', name: 'Djibouti' },
+  { code: '+254', country: 'KE', flag: '🇰🇪', name: 'Kenya' },
+  { code: '+255', country: 'TZ', flag: '🇹🇿', name: 'Tanzania' },
+  { code: '+256', country: 'UG', flag: '🇺🇬', name: 'Uganda' },
+  { code: '+257', country: 'BI', flag: '🇧🇮', name: 'Burundi' },
+  { code: '+258', country: 'MZ', flag: '🇲🇿', name: 'Mozambique' },
+  { code: '+260', country: 'ZM', flag: '🇿🇲', name: 'Zambia' },
+  { code: '+261', country: 'MG', flag: '🇲🇬', name: 'Madagascar' },
+  { code: '+262', country: 'RE', flag: '🇷🇪', name: 'Reunion' },
+  { code: '+263', country: 'ZW', flag: '🇿🇼', name: 'Zimbabwe' },
+  { code: '+264', country: 'NA', flag: '🇳🇦', name: 'Namibia' },
+  { code: '+265', country: 'MW', flag: '🇲🇼', name: 'Malawi' },
+  { code: '+266', country: 'LS', flag: '🇱🇸', name: 'Lesotho' },
+  { code: '+267', country: 'BW', flag: '🇧🇼', name: 'Botswana' },
+  { code: '+268', country: 'SZ', flag: '🇸🇿', name: 'Eswatini' },
+  { code: '+269', country: 'KM', flag: '🇰🇲', name: 'Comoros' },
+  { code: '+290', country: 'SH', flag: '🇸🇭', name: 'Saint Helena' },
+  { code: '+291', country: 'ER', flag: '🇪🇷', name: 'Eritrea' },
+  { code: '+297', country: 'AW', flag: '🇦🇼', name: 'Aruba' },
+  { code: '+298', country: 'FO', flag: '🇫🇴', name: 'Faroe Islands' },
+  { code: '+299', country: 'GL', flag: '🇬🇱', name: 'Greenland' },
+  { code: '+350', country: 'GI', flag: '🇬🇮', name: 'Gibraltar' },
+  { code: '+351', country: 'PT', flag: '🇵🇹', name: 'Portugal' },
+  { code: '+352', country: 'LU', flag: '🇱🇺', name: 'Luxembourg' },
+  { code: '+353', country: 'IE', flag: '🇮🇪', name: 'Ireland' },
+  { code: '+354', country: 'IS', flag: '🇮🇸', name: 'Iceland' },
+  { code: '+355', country: 'AL', flag: '🇦🇱', name: 'Albania' },
+  { code: '+356', country: 'MT', flag: '🇲🇹', name: 'Malta' },
+  { code: '+357', country: 'CY', flag: '🇨🇾', name: 'Cyprus' },
+  { code: '+358', country: 'FI', flag: '🇫🇮', name: 'Finland' },
+  { code: '+359', country: 'BG', flag: '🇧🇬', name: 'Bulgaria' },
+  { code: '+370', country: 'LT', flag: '🇱🇹', name: 'Lithuania' },
+  { code: '+371', country: 'LV', flag: '🇱🇻', name: 'Latvia' },
+  { code: '+372', country: 'EE', flag: '🇪🇪', name: 'Estonia' },
+  { code: '+373', country: 'MD', flag: '🇲🇩', name: 'Moldova' },
+  { code: '+374', country: 'AM', flag: '🇦🇲', name: 'Armenia' },
+  { code: '+375', country: 'BY', flag: '🇧🇾', name: 'Belarus' },
+  { code: '+376', country: 'AD', flag: '🇦🇩', name: 'Andorra' },
+  { code: '+377', country: 'MC', flag: '🇲🇨', name: 'Monaco' },
+  { code: '+378', country: 'SM', flag: '🇸🇲', name: 'San Marino' },
+  { code: '+380', country: 'UA', flag: '🇺🇦', name: 'Ukraine' },
+  { code: '+381', country: 'RS', flag: '🇷🇸', name: 'Serbia' },
+  { code: '+382', country: 'ME', flag: '🇲🇪', name: 'Montenegro' },
+  { code: '+383', country: 'XK', flag: '🇽🇰', name: 'Kosovo' },
+  { code: '+385', country: 'HR', flag: '🇭🇷', name: 'Croatia' },
+  { code: '+386', country: 'SI', flag: '🇸🇮', name: 'Slovenia' },
+  { code: '+387', country: 'BA', flag: '🇧🇦', name: 'Bosnia and Herzegovina' },
+  { code: '+389', country: 'MK', flag: '🇲🇰', name: 'North Macedonia' },
+  { code: '+420', country: 'CZ', flag: '🇨🇿', name: 'Czech Republic' },
+  { code: '+421', country: 'SK', flag: '🇸🇰', name: 'Slovakia' },
+  { code: '+423', country: 'LI', flag: '🇱🇮', name: 'Liechtenstein' },
+  { code: '+500', country: 'FK', flag: '🇫🇰', name: 'Falkland Islands' },
+  { code: '+501', country: 'BZ', flag: '🇧🇿', name: 'Belize' },
+  { code: '+502', country: 'GT', flag: '🇬🇹', name: 'Guatemala' },
+  { code: '+503', country: 'SV', flag: '🇸🇻', name: 'El Salvador' },
+  { code: '+504', country: 'HN', flag: '🇭🇳', name: 'Honduras' },
+  { code: '+505', country: 'NI', flag: '🇳🇮', name: 'Nicaragua' },
+  { code: '+506', country: 'CR', flag: '🇨🇷', name: 'Costa Rica' },
+  { code: '+507', country: 'PA', flag: '🇵🇦', name: 'Panama' },
+  { code: '+508', country: 'PM', flag: '🇵🇲', name: 'Saint Pierre and Miquelon' },
+  { code: '+509', country: 'HT', flag: '🇭🇹', name: 'Haiti' },
+  { code: '+590', country: 'GP', flag: '🇬🇵', name: 'Guadeloupe' },
+  { code: '+591', country: 'BO', flag: '🇧🇴', name: 'Bolivia' },
+  { code: '+592', country: 'GY', flag: '🇬🇾', name: 'Guyana' },
+  { code: '+593', country: 'EC', flag: '🇪🇨', name: 'Ecuador' },
+  { code: '+594', country: 'GF', flag: '🇬🇫', name: 'French Guiana' },
+  { code: '+595', country: 'PY', flag: '🇵🇾', name: 'Paraguay' },
+  { code: '+596', country: 'MQ', flag: '🇲🇶', name: 'Martinique' },
+  { code: '+597', country: 'SR', flag: '🇸🇷', name: 'Suriname' },
+  { code: '+598', country: 'UY', flag: '🇺🇾', name: 'Uruguay' },
+  { code: '+599', country: 'CW', flag: '🇨🇼', name: 'Curacao' },
+  { code: '+670', country: 'TL', flag: '🇹🇱', name: 'Timor-Leste' },
+  { code: '+672', country: 'AQ', flag: '🇦🇶', name: 'Antarctica' },
+  { code: '+673', country: 'BN', flag: '🇧🇳', name: 'Brunei' },
+  { code: '+674', country: 'NR', flag: '🇳🇷', name: 'Nauru' },
+  { code: '+675', country: 'PG', flag: '🇵🇬', name: 'Papua New Guinea' },
+  { code: '+676', country: 'TO', flag: '🇹🇴', name: 'Tonga' },
+  { code: '+677', country: 'SB', flag: '🇸🇧', name: 'Solomon Islands' },
+  { code: '+678', country: 'VU', flag: '🇻🇺', name: 'Vanuatu' },
+  { code: '+679', country: 'FJ', flag: '🇫🇯', name: 'Fiji' },
+  { code: '+680', country: 'PW', flag: '🇵🇼', name: 'Palau' },
+  { code: '+681', country: 'WF', flag: '🇼🇫', name: 'Wallis and Futuna' },
+  { code: '+682', country: 'CK', flag: '🇨🇰', name: 'Cook Islands' },
+  { code: '+683', country: 'NU', flag: '🇳🇺', name: 'Niue' },
+  { code: '+684', country: 'AS', flag: '🇦🇸', name: 'American Samoa' },
+  { code: '+685', country: 'WS', flag: '🇼🇸', name: 'Samoa' },
+  { code: '+686', country: 'KI', flag: '🇰🇮', name: 'Kiribati' },
+  { code: '+687', country: 'NC', flag: '🇳🇨', name: 'New Caledonia' },
+  { code: '+688', country: 'TV', flag: '🇹🇻', name: 'Tuvalu' },
+  { code: '+689', country: 'PF', flag: '🇵🇫', name: 'French Polynesia' },
+  { code: '+690', country: 'TK', flag: '🇹🇰', name: 'Tokelau' },
+  { code: '+691', country: 'FM', flag: '🇫🇲', name: 'Micronesia' },
+  { code: '+692', country: 'MH', flag: '🇲🇭', name: 'Marshall Islands' },
+  { code: '+850', country: 'KP', flag: '🇰🇵', name: 'North Korea' },
+  { code: '+852', country: 'HK', flag: '🇭🇰', name: 'Hong Kong' },
+  { code: '+853', country: 'MO', flag: '🇲🇴', name: 'Macau' },
+  { code: '+855', country: 'KH', flag: '🇰🇭', name: 'Cambodia' },
+  { code: '+856', country: 'LA', flag: '🇱🇦', name: 'Laos' },
+  { code: '+880', country: 'BD', flag: '🇧🇩', name: 'Bangladesh' },
+  { code: '+886', country: 'TW', flag: '🇹🇼', name: 'Taiwan' },
+  { code: '+960', country: 'MV', flag: '🇲🇻', name: 'Maldives' },
+  { code: '+961', country: 'LB', flag: '🇱🇧', name: 'Lebanon' },
+  { code: '+962', country: 'JO', flag: '🇯🇴', name: 'Jordan' },
+  { code: '+963', country: 'SY', flag: '🇸🇾', name: 'Syria' },
+  { code: '+964', country: 'IQ', flag: '🇮🇶', name: 'Iraq' },
+  { code: '+965', country: 'KW', flag: '🇰🇼', name: 'Kuwait' },
+  { code: '+966', country: 'SA', flag: '🇸🇦', name: 'Saudi Arabia' },
+  { code: '+967', country: 'YE', flag: '🇾🇪', name: 'Yemen' },
+  { code: '+968', country: 'OM', flag: '🇴🇲', name: 'Oman' },
+  { code: '+970', country: 'PS', flag: '🇵🇸', name: 'Palestine' },
+  { code: '+971', country: 'AE', flag: '🇦🇪', name: 'UAE' },
+  { code: '+972', country: 'IL', flag: '🇮🇱', name: 'Israel' },
+  { code: '+973', country: 'BH', flag: '🇧🇭', name: 'Bahrain' },
+  { code: '+974', country: 'QA', flag: '🇶🇦', name: 'Qatar' },
+  { code: '+975', country: 'BT', flag: '🇧🇹', name: 'Bhutan' },
+  { code: '+976', country: 'MN', flag: '🇲🇳', name: 'Mongolia' },
+  { code: '+977', country: 'NP', flag: '🇳🇵', name: 'Nepal' },
+  { code: '+992', country: 'TJ', flag: '🇹🇯', name: 'Tajikistan' },
+  { code: '+993', country: 'TM', flag: '🇹🇲', name: 'Turkmenistan' },
+  { code: '+994', country: 'AZ', flag: '🇦🇿', name: 'Azerbaijan' },
+  { code: '+995', country: 'GE', flag: '🇬🇪', name: 'Georgia' },
+  { code: '+996', country: 'KG', flag: '🇰🇬', name: 'Kyrgyzstan' },
+  { code: '+998', country: 'UZ', flag: '🇺🇿', name: 'Uzbekistan' }
 ];
+
+// Helper function to validate phone number based on country
+const validatePhone = (phone: string, countryCode: string) => {
+  const cleaned = phone.replace(/\D/g, '');
+  const minLength = countryCode === '+1' ? 10 : 7; // Basic validation; adjust as needed
+  const maxLength = countryCode === '+1' ? 10 : 15;
+  return cleaned.length >= minLength && cleaned.length <= maxLength && /^\d+$/.test(cleaned);
+};
 
 // Helper function to submit data to Google Sheets
 async function submitData(formDataPayload: Record<string, string>) {
@@ -63,17 +242,36 @@ async function submitData(formDataPayload: Record<string, string>) {
       params.append(key, formDataPayload[key] || '');
     });
 
-    await fetch(`${GAS_DEPLOYMENT_URL}?${params.toString()}`, {
+    const response = await fetch(GAS_DEPLOYMENT_URL, {
       method: 'POST',
-      mode: 'no-cors'
+      mode: 'cors',
+      body: params,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
     });
 
-    return { success: true };
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
   } catch (error) {
     console.error('Error submitting form:', error);
     return { success: false, error };
   }
 }
+
+// Helper to convert file to Base64
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+  });
+};
 
 export function MasterPopup() {
   const { isOpen, closePopup } = usePopup();
@@ -85,8 +283,10 @@ export function MasterPopup() {
   const [selectedCountry, setSelectedCountry] = useState(COUNTRY_CODES[0]);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showBudgetDropdown, setShowBudgetDropdown] = useState(false);
+  const [countrySearch, setCountrySearch] = useState(''); // Search state for countries
   const budgetDropdownRef = useRef<HTMLDivElement>(null);
   const countryDropdownRef = useRef<HTMLDivElement>(null);
+  const [requestId, setRequestId] = useState<string>(''); // Unique ID for session
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -97,6 +297,12 @@ export function MasterPopup() {
     overview: ''
   });
 
+  // Filtered countries based on search
+  const filteredCountries = COUNTRY_CODES.filter(country =>
+    country.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+    country.name.toLowerCase().startsWith(countrySearch.toLowerCase())
+  );
+
   // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -105,6 +311,7 @@ export function MasterPopup() {
       }
       if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target as Node)) {
         setShowCountryDropdown(false);
+        setCountrySearch(''); // Reset search on close
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -124,6 +331,8 @@ export function MasterPopup() {
         setSelectedCountry(COUNTRY_CODES[0]);
         setShowBudgetDropdown(false);
         setShowCountryDropdown(false);
+        setCountrySearch('');
+        setRequestId('');
         setFormData({
           name: '',
           email: '',
@@ -140,7 +349,7 @@ export function MasterPopup() {
   const validateStep1 = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = 'Full Name is required';
-    if (!formData.phone.trim()) newErrors.phone = 'Phone is required';
+    if (!formData.phone.trim() || !validatePhone(formData.phone, selectedCountry.code)) newErrors.phone = 'Valid phone number required for selected country';
     if (!formData.email.trim()) newErrors.email = 'Work Email is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -150,13 +359,23 @@ export function MasterPopup() {
     if (!validateStep1()) return;
     setIsSubmitting(true);
 
+    // Generate unique requestId
+    const newRequestId = crypto.randomUUID();
+    setRequestId(newRequestId);
+
+    // Convert files to Base64
+    const fileBase64 = files.length > 0 ? await fileToBase64(files[0]) : '';
+
     // Prepare data for Google Apps Script (Step 1 - Lead)
     const formDataPayload = {
       fullName: formData.name,
       email: formData.email,
       phone: `${selectedCountry.code} ${formData.phone}`,
+      country: selectedCountry.name,
       budget: formData.budget,
       description: formData.overview,
+      file: fileBase64,
+      requestId: newRequestId,
       isFinal: 'false'
     };
 
@@ -177,15 +396,21 @@ export function MasterPopup() {
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
 
+    // Convert files to Base64
+    const fileBase64 = files.length > 0 ? await fileToBase64(files[0]) : '';
+
     // Prepare data for Google Apps Script (Step 4 - Booking Confirmed)
     const formDataPayload = {
       fullName: formData.name,
       email: formData.email,
       phone: `${selectedCountry.code} ${formData.phone}`,
+      country: selectedCountry.name,
       budget: formData.budget,
       description: formData.overview,
+      file: fileBase64,
       meetingDate: formData.date,
       meetingTime: formData.time,
+      requestId: requestId,
       isFinal: 'true'
     };
 
@@ -379,7 +604,7 @@ export function MasterPopup() {
 
                     <div className="space-y-1 relative" ref={countryDropdownRef}>
                       <label className="text-xs text-gray-400">Phone *</label>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap sm:flex-nowrap"> {/* Responsive flex */}
                         <div className="relative">
                           <button
                             type="button"
@@ -393,13 +618,21 @@ export function MasterPopup() {
 
                           {showCountryDropdown && (
                             <div className="absolute top-full left-0 mt-2 w-64 max-h-60 overflow-y-auto bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl z-50 custom-scrollbar">
-                              {COUNTRY_CODES.map(country => (
+                              <input
+                                type="text"
+                                placeholder="Search countries..."
+                                value={countrySearch}
+                                onChange={e => setCountrySearch(e.target.value)}
+                                className="w-full px-4 py-2 bg-white/5 border-b border-white/10 text-white placeholder-gray-400 focus:outline-none"
+                              />
+                              {filteredCountries.map(country => (
                                 <button
                                   key={country.code + country.country}
                                   type="button"
                                   onClick={() => {
                                     setSelectedCountry(country);
                                     setShowCountryDropdown(false);
+                                    setCountrySearch('');
                                   }}
                                   className="w-full px-4 py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-3 text-sm"
                                 >
