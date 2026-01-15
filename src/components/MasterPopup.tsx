@@ -6,202 +6,83 @@ import { Button } from './ui/Button';
 import { ReviewCarousel } from './ReviewCarousel';
 import { FileUpload } from './FileUpload';
 import confetti from 'canvas-confetti';
+
+// Google Apps Script URL
+const GAS_DEPLOYMENT_URL = 'https://script.google.com/macros/s/AKfycby-sFR7nFqI0qho5WsoyH33zm_FC9SySSaaNOGRdTNCScYgwcQzf6Gr7XHr3sNVzm7NNg/exec';
+
 // Mock booked slots
-const BOOKED_SLOTS = [{
-  date: 'Monday, January 26',
-  time: '10:00 AM'
-}, {
-  date: 'Wednesday, January 28',
-  time: '02:00 PM'
-}];
+const BOOKED_SLOTS = [
+  { date: 'Monday, January 26', time: '10:00 AM' },
+  { date: 'Wednesday, January 28', time: '02:00 PM' }
+];
+
 // Popular country codes with flags
-const COUNTRY_CODES = [{
-  code: '+1',
-  country: 'US',
-  flag: '🇺🇸',
-  name: 'United States'
-}, {
-  code: '+44',
-  country: 'GB',
-  flag: '🇬🇧',
-  name: 'United Kingdom'
-}, {
-  code: '+880',
-  country: 'BD',
-  flag: '🇧🇩',
-  name: 'Bangladesh'
-}, {
-  code: '+91',
-  country: 'IN',
-  flag: '🇮🇳',
-  name: 'India'
-}, {
-  code: '+92',
-  country: 'PK',
-  flag: '🇵🇰',
-  name: 'Pakistan'
-}, {
-  code: '+86',
-  country: 'CN',
-  flag: '🇨🇳',
-  name: 'China'
-}, {
-  code: '+81',
-  country: 'JP',
-  flag: '🇯🇵',
-  name: 'Japan'
-}, {
-  code: '+82',
-  country: 'KR',
-  flag: '🇰🇷',
-  name: 'South Korea'
-}, {
-  code: '+49',
-  country: 'DE',
-  flag: '🇩🇪',
-  name: 'Germany'
-}, {
-  code: '+33',
-  country: 'FR',
-  flag: '🇫🇷',
-  name: 'France'
-}, {
-  code: '+39',
-  country: 'IT',
-  flag: '🇮🇹',
-  name: 'Italy'
-}, {
-  code: '+34',
-  country: 'ES',
-  flag: '🇪🇸',
-  name: 'Spain'
-}, {
-  code: '+7',
-  country: 'RU',
-  flag: '🇷🇺',
-  name: 'Russia'
-}, {
-  code: '+61',
-  country: 'AU',
-  flag: '🇦🇺',
-  name: 'Australia'
-}, {
-  code: '+64',
-  country: 'NZ',
-  flag: '🇳🇿',
-  name: 'New Zealand'
-}, {
-  code: '+27',
-  country: 'ZA',
-  flag: '🇿🇦',
-  name: 'South Africa'
-}, {
-  code: '+20',
-  country: 'EG',
-  flag: '🇪🇬',
-  name: 'Egypt'
-}, {
-  code: '+234',
-  country: 'NG',
-  flag: '🇳🇬',
-  name: 'Nigeria'
-}, {
-  code: '+254',
-  country: 'KE',
-  flag: '🇰🇪',
-  name: 'Kenya'
-}, {
-  code: '+971',
-  country: 'AE',
-  flag: '🇦🇪',
-  name: 'UAE'
-}, {
-  code: '+966',
-  country: 'SA',
-  flag: '🇸🇦',
-  name: 'Saudi Arabia'
-}, {
-  code: '+90',
-  country: 'TR',
-  flag: '🇹🇷',
-  name: 'Turkey'
-}, {
-  code: '+60',
-  country: 'MY',
-  flag: '🇲🇾',
-  name: 'Malaysia'
-}, {
-  code: '+65',
-  country: 'SG',
-  flag: '🇸🇬',
-  name: 'Singapore'
-}, {
-  code: '+66',
-  country: 'TH',
-  flag: '🇹🇭',
-  name: 'Thailand'
-}, {
-  code: '+84',
-  country: 'VN',
-  flag: '🇻🇳',
-  name: 'Vietnam'
-}, {
-  code: '+62',
-  country: 'ID',
-  flag: '🇮🇩',
-  name: 'Indonesia'
-}, {
-  code: '+63',
-  country: 'PH',
-  flag: '🇵🇭',
-  name: 'Philippines'
-}, {
-  code: '+52',
-  country: 'MX',
-  flag: '🇲🇽',
-  name: 'Mexico'
-}, {
-  code: '+55',
-  country: 'BR',
-  flag: '🇧🇷',
-  name: 'Brazil'
-}, {
-  code: '+54',
-  country: 'AR',
-  flag: '🇦🇷',
-  name: 'Argentina'
-}, {
-  code: '+56',
-  country: 'CL',
-  flag: '🇨🇱',
-  name: 'Chile'
-}, {
-  code: '+57',
-  country: 'CO',
-  flag: '🇨🇴',
-  name: 'Colombia'
-}, {
-  code: '+51',
-  country: 'PE',
-  flag: '🇵🇪',
-  name: 'Peru'
-}, {
-  code: '+1',
-  country: 'CA',
-  flag: '🇨🇦',
-  name: 'Canada'
-}];
+const COUNTRY_CODES = [
+  { code: '+1', country: 'US', flag: '🇺🇸', name: 'United States' },
+  { code: '+44', country: 'GB', flag: '🇬🇧', name: 'United Kingdom' },
+  { code: '+880', country: 'BD', flag: '🇧🇩', name: 'Bangladesh' },
+  { code: '+91', country: 'IN', flag: '🇮🇳', name: 'India' },
+  { code: '+92', country: 'PK', flag: '🇵🇰', name: 'Pakistan' },
+  { code: '+86', country: 'CN', flag: '🇨🇳', name: 'China' },
+  { code: '+81', country: 'JP', flag: '🇯🇵', name: 'Japan' },
+  { code: '+82', country: 'KR', flag: '🇰🇷', name: 'South Korea' },
+  { code: '+49', country: 'DE', flag: '🇩🇪', name: 'Germany' },
+  { code: '+33', country: 'FR', flag: '🇫🇷', name: 'France' },
+  { code: '+39', country: 'IT', flag: '🇮🇹', name: 'Italy' },
+  { code: '+34', country: 'ES', flag: '🇪🇸', name: 'Spain' },
+  { code: '+7', country: 'RU', flag: '🇷🇺', name: 'Russia' },
+  { code: '+61', country: 'AU', flag: '🇦🇺', name: 'Australia' },
+  { code: '+64', country: 'NZ', flag: '🇳🇿', name: 'New Zealand' },
+  { code: '+27', country: 'ZA', flag: '🇿🇦', name: 'South Africa' },
+  { code: '+20', country: 'EG', flag: '🇪🇬', name: 'Egypt' },
+  { code: '+234', country: 'NG', flag: '🇳🇬', name: 'Nigeria' },
+  { code: '+254', country: 'KE', flag: '🇰🇪', name: 'Kenya' },
+  { code: '+971', country: 'AE', flag: '🇦🇪', name: 'UAE' },
+  { code: '+966', country: 'SA', flag: '🇸🇦', name: 'Saudi Arabia' },
+  { code: '+90', country: 'TR', flag: '🇹🇷', name: 'Turkey' },
+  { code: '+60', country: 'MY', flag: '🇲🇾', name: 'Malaysia' },
+  { code: '+65', country: 'SG', flag: '🇸🇬', name: 'Singapore' },
+  { code: '+66', country: 'TH', flag: '🇹🇭', name: 'Thailand' },
+  { code: '+84', country: 'VN', flag: '🇻🇳', name: 'Vietnam' },
+  { code: '+62', country: 'ID', flag: '🇮🇩', name: 'Indonesia' },
+  { code: '+63', country: 'PH', flag: '🇵🇭', name: 'Philippines' },
+  { code: '+52', country: 'MX', flag: '🇲🇽', name: 'Mexico' },
+  { code: '+55', country: 'BR', flag: '🇧🇷', name: 'Brazil' },
+  { code: '+54', country: 'AR', flag: '🇦🇷', name: 'Argentina' },
+  { code: '+56', country: 'CL', flag: '🇨🇱', name: 'Chile' },
+  { code: '+57', country: 'CO', flag: '🇨🇴', name: 'Colombia' },
+  { code: '+51', country: 'PE', flag: '🇵🇪', name: 'Peru' },
+  { code: '+1', country: 'CA', flag: '🇨🇦', name: 'Canada' }
+];
+
+// Helper function to submit data to Google Sheets
+async function submitData(formDataPayload: Record<string, string>) {
+  try {
+    const params = new URLSearchParams();
+    Object.keys(formDataPayload).forEach(key => {
+      params.append(key, formDataPayload[key] || '');
+    });
+
+    await fetch(`${GAS_DEPLOYMENT_URL}?${params.toString()}`, {
+      method: 'POST',
+      mode: 'no-cors'
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    return { success: false, error };
+  }
+}
+
 export function MasterPopup() {
-  const {
-    isOpen,
-    closePopup
-  } = usePopup();
+  const { isOpen, closePopup } = usePopup();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showIntermediateSuccess, setShowIntermediateSuccess] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [selectedCountry, setSelectedCountry] = useState(COUNTRY_CODES[0]); // Changed to US (index 0)
+  const [selectedCountry, setSelectedCountry] = useState(COUNTRY_CODES[0]);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showBudgetDropdown, setShowBudgetDropdown] = useState(false);
   const budgetDropdownRef = useRef<HTMLDivElement>(null);
@@ -215,6 +96,7 @@ export function MasterPopup() {
     time: '',
     overview: ''
   });
+
   // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -230,6 +112,7 @@ export function MasterPopup() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
   // Reset state when closed
   useEffect(() => {
     if (!isOpen) {
@@ -238,7 +121,7 @@ export function MasterPopup() {
         setFiles([]);
         setErrors({});
         setShowIntermediateSuccess(false);
-        setSelectedCountry(COUNTRY_CODES[0]); // Reset to US
+        setSelectedCountry(COUNTRY_CODES[0]);
         setShowBudgetDropdown(false);
         setShowCountryDropdown(false);
         setFormData({
@@ -253,6 +136,7 @@ export function MasterPopup() {
       }, 500);
     }
   }, [isOpen]);
+
   const validateStep1 = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = 'Full Name is required';
@@ -261,97 +145,112 @@ export function MasterPopup() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   const handleFirstStepSubmit = async () => {
     if (!validateStep1()) return;
     setIsSubmitting(true);
-    // Simulate email sending
-    console.log('Sending initial inquiry to phixels.io@gmail.com', {
-      ...formData,
+
+    // Prepare data for Google Apps Script (Step 1 - Lead)
+    const formDataPayload = {
+      fullName: formData.name,
+      email: formData.email,
       phone: `${selectedCountry.code} ${formData.phone}`,
-      files: files.map(f => f.name)
-    });
+      budget: formData.budget,
+      description: formData.overview,
+      isFinal: 'false'
+    };
+
+    // Submit to Google Sheets
+    await submitData(formDataPayload);
+
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsSubmitting(false);
     setShowIntermediateSuccess(true);
+
     // Show success message for 2 seconds then move to next step
     setTimeout(() => {
       setShowIntermediateSuccess(false);
       setStep(2);
     }, 2000);
   };
+
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate final API call / Email sending
-    console.log('Sending final booking to phixels.io@gmail.com', {
-      ...formData,
+
+    // Prepare data for Google Apps Script (Step 4 - Booking Confirmed)
+    const formDataPayload = {
+      fullName: formData.name,
+      email: formData.email,
       phone: `${selectedCountry.code} ${formData.phone}`,
-      files: files.map(f => f.name)
-    });
+      budget: formData.budget,
+      description: formData.overview,
+      meetingDate: formData.date,
+      meetingTime: formData.time,
+      isFinal: 'true'
+    };
+
+    // Submit to Google Sheets
+    await submitData(formDataPayload);
+
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsSubmitting(false);
     setStep(5); // Success step
+
     // Trigger confetti
     confetti({
       particleCount: 150,
       spread: 80,
-      origin: {
-        y: 0.6
-      },
+      origin: { y: 0.6 },
       colors: ['#ED1F24', '#FFFF00', '#00CD49']
     });
+
     // Auto close
     setTimeout(() => {
       closePopup();
     }, 4000);
   };
+
   const isSlotBooked = (dateStr: string, timeStr: string) => {
     return BOOKED_SLOTS.some(slot => slot.date.includes(dateStr) && slot.time === timeStr);
   };
+
   if (!isOpen) return null;
+
   // Mock dates for calendar
-  const dates = Array.from({
-    length: 14
-  }, (_, i) => {
+  const dates = Array.from({ length: 14 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + i + 1);
     return {
-      day: d.toLocaleDateString('en-US', {
-        weekday: 'short'
-      }),
+      day: d.toLocaleDateString('en-US', { weekday: 'short' }),
       date: d.getDate(),
-      full: d.toLocaleDateString('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric'
-      })
+      full: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
     };
   });
+
   const timeSlots = ['10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
   const budgetOptions = ['Less than $1k', '$1k - $3k', '$3k - $10k', '$10k - $20k', '$20k - $50k', 'More than $50k'];
-  return <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-        <motion.div initial={{
-        opacity: 0
-      }} animate={{
-        opacity: 1
-      }} exit={{
-        opacity: 0
-      }} onClick={closePopup} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
 
-        <motion.div initial={{
-        opacity: 0,
-        scale: 0.95,
-        y: 20
-      }} animate={{
-        opacity: 1,
-        scale: 1,
-        y: 0
-      }} exit={{
-        opacity: 0,
-        scale: 0.95,
-        y: 20
-      }} className="relative w-full max-w-6xl bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[95vh]">
-          <button onClick={closePopup} className="absolute top-4 right-4 z-20 p-2 bg-white/5 rounded-full hover:bg-white/10 text-white transition-colors">
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={closePopup}
+          className="absolute inset-0 bg-black/90 backdrop-blur-md"
+        />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          className="relative w-full max-w-6xl bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[95vh]"
+        >
+          <button
+            onClick={closePopup}
+            className="absolute top-4 right-4 z-20 p-2 bg-white/5 rounded-full hover:bg-white/10 text-white transition-colors"
+          >
             <X size={20} />
           </button>
 
@@ -361,67 +260,21 @@ export function MasterPopup() {
 
             <div className="relative z-10 flex flex-col h-full">
               {/* Animated Mascot Character */}
-              <motion.div className="self-center mb-6 relative" animate={{
-              y: [0, -8, 0]
-            }} transition={{
-              repeat: Infinity,
-              duration: 3,
-              ease: 'easeInOut'
-            }}>
+              <motion.div className="self-center mb-6 relative" animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}>
                 <div className="w-28 h-28 relative">
-                  <motion.div className="w-full h-full relative" whileHover={{
-                  scale: 1.1
-                }} transition={{
-                  type: 'spring',
-                  stiffness: 300
-                }}>
-                    <motion.div className="absolute inset-0 flex items-center justify-center" animate={{
-                    rotateY: [0, 10, 0, -10, 0]
-                  }} transition={{
-                    repeat: Infinity,
-                    duration: 4,
-                    ease: 'easeInOut'
-                  }}>
+                  <motion.div className="w-full h-full relative" whileHover={{ scale: 1.1 }} transition={{ type: 'spring', stiffness: 300 }}>
+                    <motion.div className="absolute inset-0 flex items-center justify-center" animate={{ rotateY: [0, 10, 0, -10, 0] }} transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}>
                       <svg viewBox="0 0 100 100" className="w-full h-full">
-                        <motion.circle cx="50" cy="8" r="5" fill="var(--neon-yellow)" animate={{
-                        opacity: [1, 0.5, 1],
-                        scale: [1, 1.2, 1]
-                      }} transition={{
-                        repeat: Infinity,
-                        duration: 1.5
-                      }} />
+                        <motion.circle cx="50" cy="8" r="5" fill="var(--neon-yellow)" animate={{ opacity: [1, 0.5, 1], scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} />
                         <line x1="50" y1="13" x2="50" y2="22" stroke="var(--neon-yellow)" strokeWidth="3" />
                         <rect x="20" y="22" width="60" height="50" rx="8" fill="#1a1a1a" stroke="var(--bright-red)" strokeWidth="2" />
-                        <motion.circle cx="35" cy="42" r="8" fill="var(--bright-red)" animate={{
-                        scale: [1, 1.1, 1]
-                      }} transition={{
-                        repeat: Infinity,
-                        duration: 2,
-                        delay: 0.2
-                      }} />
-                        <motion.circle cx="65" cy="42" r="8" fill="var(--bright-red)" animate={{
-                        scale: [1, 1.1, 1]
-                      }} transition={{
-                        repeat: Infinity,
-                        duration: 2,
-                        delay: 0.4
-                      }} />
+                        <motion.circle cx="35" cy="42" r="8" fill="var(--bright-red)" animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 2, delay: 0.2 }} />
+                        <motion.circle cx="65" cy="42" r="8" fill="var(--bright-red)" animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 2, delay: 0.4 }} />
                         <circle cx="35" cy="42" r="3" fill="white" />
                         <circle cx="65" cy="42" r="3" fill="white" />
-                        <motion.rect x="35" y="55" width="30" height="4" rx="2" fill="var(--neon-yellow)" animate={{
-                        width: [30, 25, 30]
-                      }} transition={{
-                        repeat: Infinity,
-                        duration: 2
-                      }} />
+                        <motion.rect x="35" y="55" width="30" height="4" rx="2" fill="var(--neon-yellow)" animate={{ width: [30, 25, 30] }} transition={{ repeat: Infinity, duration: 2 }} />
                         <rect x="25" y="75" width="50" height="20" rx="5" fill="#1a1a1a" stroke="var(--neon-yellow)" strokeWidth="2" />
-                        <motion.circle cx="50" cy="85" r="6" fill="var(--vibrant-green)" animate={{
-                        opacity: [1, 0.4, 1],
-                        fill: ['var(--vibrant-green)', 'var(--neon-yellow)', 'var(--vibrant-green)']
-                      }} transition={{
-                        repeat: Infinity,
-                        duration: 2
-                      }} />
+                        <motion.circle cx="50" cy="85" r="6" fill="var(--vibrant-green)" animate={{ opacity: [1, 0.4, 1], fill: ['var(--vibrant-green)', 'var(--neon-yellow)', 'var(--vibrant-green)'] }} transition={{ repeat: Infinity, duration: 2 }} />
                       </svg>
                     </motion.div>
                     <div className="absolute inset-0 bg-[color:var(--bright-red)]/20 rounded-full blur-xl -z-10" />
@@ -430,12 +283,7 @@ export function MasterPopup() {
               </motion.div>
 
               <div className="text-center mb-8">
-                <motion.h3 className="text-2xl font-bold mb-3 text-white cursor-default" whileHover={{
-                scale: 1.05
-              }} transition={{
-                type: 'spring',
-                stiffness: 300
-              }}>
+                <motion.h3 className="text-2xl font-bold mb-3 text-white cursor-default" whileHover={{ scale: 1.05 }} transition={{ type: 'spring', stiffness: 300 }}>
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-[color:var(--neon-yellow)] to-white bg-300% animate-gradient">
                     Transforming Ideas Into
                     <br />
@@ -443,8 +291,7 @@ export function MasterPopup() {
                   </span>
                 </motion.h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  Join hundreds of visionary founders who scaled their dreams
-                  with Phixels.
+                  Join hundreds of visionary founders who scaled their dreams with Phixels.
                 </p>
               </div>
 
@@ -457,31 +304,20 @@ export function MasterPopup() {
                   Trusted By Industry Leaders
                 </p>
                 <div className="grid grid-cols-3 gap-3">
-                  {[{
-                  name: 'TechCorp',
-                  color: '#4285F4'
-                }, {
-                  name: 'DataFlow',
-                  color: '#34A853'
-                }, {
-                  name: 'CloudSync',
-                  color: '#FBBC05'
-                }, {
-                  name: 'NexGen',
-                  color: '#EA4335'
-                }, {
-                  name: 'ByteWave',
-                  color: '#9C27B0'
-                }, {
-                  name: 'CodeLabs',
-                  color: '#FF6F00'
-                }].map((brand, i) => <div key={i} className="h-10 bg-white/5 rounded flex items-center justify-center hover:bg-white/10 transition-colors group cursor-default">
-                      <span className="text-[10px] font-bold" style={{
-                    color: brand.color
-                  }}>
+                  {[
+                    { name: 'TechCorp', color: '#4285F4' },
+                    { name: 'DataFlow', color: '#34A853' },
+                    { name: 'CloudSync', color: '#FBBC05' },
+                    { name: 'NexGen', color: '#EA4335' },
+                    { name: 'ByteWave', color: '#9C27B0' },
+                    { name: 'CodeLabs', color: '#FF6F00' }
+                  ].map((brand, i) => (
+                    <div key={i} className="h-10 bg-white/5 rounded flex items-center justify-center hover:bg-white/10 transition-colors group cursor-default">
+                      <span className="text-[10px] font-bold" style={{ color: brand.color }}>
                         {brand.name}
                       </span>
-                    </div>)}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -491,222 +327,213 @@ export function MasterPopup() {
           <div className="w-full md:w-[65%] p-8 overflow-y-auto bg-[#0A0A0A] custom-scrollbar relative">
             {/* Intermediate Success Modal */}
             <AnimatePresence>
-              {showIntermediateSuccess && <motion.div initial={{
-              opacity: 0
-            }} animate={{
-              opacity: 1
-            }} exit={{
-              opacity: 0
-            }} className="absolute inset-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8">
-                  <motion.div initial={{
-                scale: 0.5,
-                opacity: 0
-              }} animate={{
-                scale: 1,
-                opacity: 1
-              }} className="w-16 h-16 rounded-full bg-[color:var(--vibrant-green)]/20 flex items-center justify-center mb-4">
+              {showIntermediateSuccess && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8">
+                  <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-16 h-16 rounded-full bg-[color:var(--vibrant-green)]/20 flex items-center justify-center mb-4">
                     <Check className="text-[color:var(--vibrant-green)]" size={32} />
                   </motion.div>
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    Great Start!
-                  </h3>
-                  <p className="text-gray-400">
-                    We've received your initial details.
-                    <br />
-                    Let's schedule your call.
-                  </p>
-                </motion.div>}
+                  <h3 className="text-2xl font-bold text-white mb-2">Great Start!</h3>
+                  <p className="text-gray-400">We've received your initial details.<br />Let's schedule your call.</p>
+                </motion.div>
+              )}
             </AnimatePresence>
 
             <div className="max-w-2xl mx-auto h-full flex flex-col">
-              {step < 5 && <div className="mb-8">
+              {step < 5 && (
+                <div className="mb-8">
                   <h2 className="text-3xl font-bold text-white mb-2">
                     Let's Engineer Your <br />
                     <span className="text-gradient">Billion-Dollar Idea</span>
                   </h2>
                   <div className="flex gap-2 mt-6">
-                    {[1, 2, 3, 4].map(i => <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${step >= i ? 'bg-[color:var(--bright-red)]' : 'bg-white/10'}`} />)}
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${step >= i ? 'bg-[color:var(--bright-red)]' : 'bg-white/10'}`} />
+                    ))}
                   </div>
-                </div>}
+                </div>
+              )}
 
               {/* STEP 1: Info & Files */}
-              {step === 1 && <motion.div initial={{
-              opacity: 0,
-              x: 20
-            }} animate={{
-              opacity: 1,
-              x: 0
-            }} className="space-y-6">
+              {step === 1 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs text-gray-400">
-                        Full Name *
-                      </label>
-                      <input type="text" className={`w-full bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`} placeholder="John Doe" value={formData.name} onChange={e => {
-                    setFormData({
-                      ...formData,
-                      name: e.target.value
-                    });
-                    if (errors.name) setErrors({
-                      ...errors,
-                      name: ''
-                    });
-                  }} />
-                      {errors.name && <p className="text-red-500 text-[10px] flex items-center gap-1">
+                      <label className="text-xs text-gray-400">Full Name *</label>
+                      <input
+                        name="fullName"
+                        type="text"
+                        className={`w-full bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`}
+                        placeholder="John Doe"
+                        value={formData.name}
+                        onChange={e => {
+                          setFormData({ ...formData, name: e.target.value });
+                          if (errors.name) setErrors({ ...errors, name: '' });
+                        }}
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-[10px] flex items-center gap-1">
                           <AlertCircle size={10} /> {errors.name}
-                        </p>}
+                        </p>
+                      )}
                     </div>
+
                     <div className="space-y-1 relative" ref={countryDropdownRef}>
                       <label className="text-xs text-gray-400">Phone *</label>
                       <div className="flex gap-2">
                         <div className="relative">
-                          <button type="button" onClick={() => setShowCountryDropdown(!showCountryDropdown)} className={`h-full bg-white/5 border rounded-lg px-3 py-3 text-white focus:outline-none transition-colors flex items-center gap-2 ${errors.phone ? 'border-red-500' : 'border-white/10 hover:border-white/20'}`}>
-                            <span className="text-lg">
-                              {selectedCountry.flag}
-                            </span>
-                            <span className="text-sm">
-                              {selectedCountry.code}
-                            </span>
+                          <button
+                            type="button"
+                            onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                            className={`h-full bg-white/5 border rounded-lg px-3 py-3 text-white focus:outline-none transition-colors flex items-center gap-2 ${errors.phone ? 'border-red-500' : 'border-white/10 hover:border-white/20'}`}
+                          >
+                            <span className="text-lg">{selectedCountry.flag}</span>
+                            <span className="text-sm">{selectedCountry.code}</span>
                             <ChevronDown size={14} className="text-gray-400" />
                           </button>
 
-                          {showCountryDropdown && <div className="absolute top-full left-0 mt-2 w-64 max-h-60 overflow-y-auto bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl z-50 custom-scrollbar">
-                              {COUNTRY_CODES.map(country => <button key={country.code + country.country} type="button" onClick={() => {
-                          setSelectedCountry(country);
-                          setShowCountryDropdown(false);
-                        }} className="w-full px-4 py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-3 text-sm">
-                                  <span className="text-lg">
-                                    {country.flag}
-                                  </span>
-                                  <span className="text-white flex-1">
-                                    {country.name}
-                                  </span>
-                                  <span className="text-gray-400">
-                                    {country.code}
-                                  </span>
-                                </button>)}
-                            </div>}
+                          {showCountryDropdown && (
+                            <div className="absolute top-full left-0 mt-2 w-64 max-h-60 overflow-y-auto bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl z-50 custom-scrollbar">
+                              {COUNTRY_CODES.map(country => (
+                                <button
+                                  key={country.code + country.country}
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedCountry(country);
+                                    setShowCountryDropdown(false);
+                                  }}
+                                  className="w-full px-4 py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-3 text-sm"
+                                >
+                                  <span className="text-lg">{country.flag}</span>
+                                  <span className="text-white flex-1">{country.name}</span>
+                                  <span className="text-gray-400">{country.code}</span>
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                        <input type="tel" className={`flex-1 bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`} placeholder="123 456 7890" value={formData.phone} onChange={e => {
-                      setFormData({
-                        ...formData,
-                        phone: e.target.value
-                      });
-                      if (errors.phone) setErrors({
-                        ...errors,
-                        phone: ''
-                      });
-                    }} />
+
+                        <input
+                          name="phone"
+                          type="tel"
+                          className={`flex-1 bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`}
+                          placeholder="123 456 7890"
+                          value={formData.phone}
+                          onChange={e => {
+                            setFormData({ ...formData, phone: e.target.value });
+                            if (errors.phone) setErrors({ ...errors, phone: '' });
+                          }}
+                        />
                       </div>
-                      {errors.phone && <p className="text-red-500 text-[10px] flex items-center gap-1">
+                      {errors.phone && (
+                        <p className="text-red-500 text-[10px] flex items-center gap-1">
                           <AlertCircle size={10} /> {errors.phone}
-                        </p>}
+                        </p>
+                      )}
                     </div>
                   </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs text-gray-400">
-                        Work Email *
-                      </label>
-                      <input type="email" className={`w-full bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`} placeholder="john@company.com" value={formData.email} onChange={e => {
-                    setFormData({
-                      ...formData,
-                      email: e.target.value
-                    });
-                    if (errors.email) setErrors({
-                      ...errors,
-                      email: ''
-                    });
-                  }} />
-                      {errors.email && <p className="text-red-500 text-[10px] flex items-center gap-1">
+                      <label className="text-xs text-gray-400">Work Email *</label>
+                      <input
+                        name="email"
+                        type="email"
+                        className={`w-full bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`}
+                        placeholder="john@company.com"
+                        value={formData.email}
+                        onChange={e => {
+                          setFormData({ ...formData, email: e.target.value });
+                          if (errors.email) setErrors({ ...errors, email: '' });
+                        }}
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-[10px] flex items-center gap-1">
                           <AlertCircle size={10} /> {errors.email}
-                        </p>}
+                        </p>
+                      )}
                     </div>
+
                     <div className="space-y-1 relative" ref={budgetDropdownRef}>
-                      <label className="text-xs text-gray-400">
-                        Budget Range
-                      </label>
+                      <label className="text-xs text-gray-400">Budget Range</label>
                       <div className="relative">
-                        <button type="button" onClick={() => setShowBudgetDropdown(!showBudgetDropdown)} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors text-left flex items-center justify-between">
-                          <span className={formData.budget ? 'text-white' : 'text-gray-500'}>
-                            {formData.budget || 'Select Range'}
-                          </span>
+                        <button
+                          type="button"
+                          onClick={() => setShowBudgetDropdown(!showBudgetDropdown)}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors text-left flex items-center justify-between"
+                        >
+                          <span className={formData.budget ? 'text-white' : 'text-gray-500'}>{formData.budget || 'Select Range'}</span>
                           <ChevronDown className="text-gray-400" size={16} />
                         </button>
 
-                        {showBudgetDropdown && <div className="absolute top-full left-0 right-0 mt-2 bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl z-50 overflow-hidden">
-                            {budgetOptions.map(option => <button key={option} type="button" onClick={() => {
-                        setFormData({
-                          ...formData,
-                          budget: option
-                        });
-                        setShowBudgetDropdown(false);
-                      }} className="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-colors text-sm">
+                        {showBudgetDropdown && (
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl z-50 overflow-hidden">
+                            {budgetOptions.map(option => (
+                              <button
+                                key={option}
+                                type="button"
+                                onClick={() => {
+                                  setFormData({ ...formData, budget: option });
+                                  setShowBudgetDropdown(false);
+                                }}
+                                className="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-colors text-sm"
+                              >
                                 {option}
-                              </button>)}
-                          </div>}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-400">
-                      Project Description
-                    </label>
-                    <textarea className="w-full h-24 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors resize-none" placeholder="Briefly describe your project vision..." value={formData.overview} onChange={e => setFormData({
-                  ...formData,
-                  overview: e.target.value
-                })} />
+                    <label className="text-xs text-gray-400">Project Description</label>
+                    <textarea
+                      name="description"
+                      className="w-full h-24 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors resize-none"
+                      placeholder="Briefly describe your project vision..."
+                      value={formData.overview}
+                      onChange={e => setFormData({ ...formData, overview: e.target.value })}
+                    />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs text-gray-400">
-                      Attachments (Optional)
-                    </label>
+                    <label className="text-xs text-gray-400">Attachments (Optional)</label>
                     <FileUpload files={files} onFilesChange={setFiles} />
                   </div>
 
                   <Button onClick={handleFirstStepSubmit} disabled={isSubmitting} className="w-full group relative overflow-hidden" variant="primary" glow>
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       {isSubmitting ? 'Processing...' : "Let's Connect"}
-                      {!isSubmitting && <motion.span animate={{
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 10, -10, 0]
-                  }} transition={{
-                    repeat: Infinity,
-                    duration: 2
-                  }}>
+                      {!isSubmitting && (
+                        <motion.span animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
                           <Zap size={18} className="fill-current" />
-                        </motion.span>}
+                        </motion.span>
+                      )}
                     </span>
                   </Button>
-                </motion.div>}
+                </motion.div>
+              )}
 
               {/* STEP 2: Date */}
-              {step === 2 && <motion.div initial={{
-              opacity: 0,
-              x: 20
-            }} animate={{
-              opacity: 1,
-              x: 0
-            }} className="space-y-6">
+              {step === 2 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                   <div className="text-center mb-6">
-                    <h3 className="text-xl font-semibold text-white">
-                      Select a Date
-                    </h3>
-                    <p className="text-sm text-gray-400">
-                      When should we discuss your project?
-                    </p>
+                    <h3 className="text-xl font-semibold text-white">Select a Date</h3>
+                    <p className="text-sm text-gray-400">When should we discuss your project?</p>
                   </div>
 
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                    {dates.map((d, i) => <button key={i} onClick={() => setFormData({
-                  ...formData,
-                  date: d.full
-                })} className={`p-3 rounded-xl border transition-all ${formData.date === d.full ? 'bg-[color:var(--bright-red)] border-[color:var(--bright-red)] text-white' : 'bg-white/5 border-white/10 text-gray-300 hover:border-[color:var(--neon-yellow)] hover:bg-white/10'}`}>
+                    {dates.map((d, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setFormData({ ...formData, date: d.full })}
+                        className={`p-3 rounded-xl border transition-all ${formData.date === d.full ? 'bg-[color:var(--bright-red)] border-[color:var(--bright-red)] text-white' : 'bg-white/5 border-white/10 text-gray-300 hover:border-[color:var(--neon-yellow)] hover:bg-white/10'}`}
+                      >
                         <div className="text-xs opacity-70">{d.day}</div>
                         <div className="text-lg font-bold">{d.date}</div>
-                      </button>)}
+                      </button>
+                    ))}
                   </div>
 
                   <div className="flex gap-3 pt-4">
@@ -717,37 +544,33 @@ export function MasterPopup() {
                       Continue
                     </Button>
                   </div>
-                </motion.div>}
+                </motion.div>
+              )}
 
               {/* STEP 3: Time */}
-              {step === 3 && <motion.div initial={{
-              opacity: 0,
-              x: 20
-            }} animate={{
-              opacity: 1,
-              x: 0
-            }} className="space-y-6">
+              {step === 3 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                   <div className="text-center mb-6">
-                    <h3 className="text-xl font-semibold text-white">
-                      Select a Time
-                    </h3>
+                    <h3 className="text-xl font-semibold text-white">Select a Time</h3>
                     <p className="text-sm text-gray-400">{formData.date}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     {timeSlots.map(time => {
-                  const isBooked = isSlotBooked(formData.date, time);
-                  return <button key={time} disabled={isBooked} onClick={() => setFormData({
-                    ...formData,
-                    time
-                  })} className={`p-4 rounded-xl border flex items-center justify-center gap-2 transition-all ${isBooked ? 'opacity-40 cursor-not-allowed bg-white/5 border-white/5' : formData.time === time ? 'bg-[color:var(--bright-red)] border-[color:var(--bright-red)] text-white' : 'bg-white/5 border-white/10 text-gray-300 hover:border-[color:var(--neon-yellow)] hover:bg-white/10'}`}>
+                      const isBooked = isSlotBooked(formData.date, time);
+                      return (
+                        <button
+                          key={time}
+                          disabled={isBooked}
+                          onClick={() => setFormData({ ...formData, time })}
+                          className={`p-4 rounded-xl border flex items-center justify-center gap-2 transition-all ${isBooked ? 'opacity-40 cursor-not-allowed bg-white/5 border-white/5' : formData.time === time ? 'bg-[color:var(--bright-red)] border-[color:var(--bright-red)] text-white' : 'bg-white/5 border-white/10 text-gray-300 hover:border-[color:var(--neon-yellow)] hover:bg-white/10'}`}
+                        >
                           <Clock size={16} />
                           <span className="font-medium">{time}</span>
-                          {isBooked && <span className="text-[10px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded ml-1">
-                              Booked
-                            </span>}
-                        </button>;
-                })}
+                          {isBooked && <span className="text-[10px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded ml-1">Booked</span>}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <div className="flex gap-3 pt-4">
@@ -758,35 +581,21 @@ export function MasterPopup() {
                       Review & Confirm
                     </Button>
                   </div>
-                </motion.div>}
+                </motion.div>
+              )}
 
               {/* STEP 4: Review */}
-              {step === 4 && <motion.div initial={{
-              opacity: 0,
-              x: 20
-            }} animate={{
-              opacity: 1,
-              x: 0
-            }} className="space-y-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">
-                    Review Details
-                  </h3>
+              {step === 4 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                  <h3 className="text-xl font-semibold text-white mb-4">Review Details</h3>
 
                   <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
                     <div className="p-4 border-b border-white/10 flex justify-between items-start">
                       <div>
-                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">
-                          Contact Info
-                        </div>
-                        <div className="font-medium text-white">
-                          {formData.name}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          {formData.email}
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          {formData.phone}
-                        </div>
+                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Contact Info</div>
+                        <div className="font-medium text-white">{formData.name}</div>
+                        <div className="text-sm text-gray-400">{formData.email}</div>
+                        <div className="text-sm text-gray-400">{`${selectedCountry.code} ${formData.phone}`}</div>
                       </div>
                       <button onClick={() => setStep(1)} className="p-2 hover:bg-white/10 rounded-full text-gray-400 transition-colors">
                         <Edit2 size={14} />
@@ -795,9 +604,7 @@ export function MasterPopup() {
 
                     <div className="p-4 border-b border-white/10 flex justify-between items-start">
                       <div>
-                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">
-                          Appointment
-                        </div>
+                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Appointment</div>
                         <div className="flex items-center gap-2 text-[color:var(--neon-yellow)] font-medium">
                           <Calendar size={14} /> {formData.date}
                         </div>
@@ -812,16 +619,18 @@ export function MasterPopup() {
 
                     <div className="p-4 border-b border-white/10 flex justify-between items-start">
                       <div>
-                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-2">
-                          Attachments
-                        </div>
-                        {files.length > 0 ? <div className="flex flex-wrap gap-2">
-                            {files.map((f, i) => <span key={i} className="px-2 py-1 bg-white/10 rounded text-xs text-white flex items-center gap-1">
+                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-2">Attachments</div>
+                        {files.length > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {files.map((f, i) => (
+                              <span key={i} className="px-2 py-1 bg-white/10 rounded text-xs text-white flex items-center gap-1">
                                 {f.name}
-                              </span>)}
-                          </div> : <span className="text-sm text-gray-500 italic">
-                            No attachments
-                          </span>}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-500 italic">No attachments</span>
+                        )}
                       </div>
                       <button onClick={() => setStep(1)} className="p-2 hover:bg-white/10 rounded-full text-gray-400 transition-colors">
                         <Edit2 size={14} />
@@ -830,13 +639,9 @@ export function MasterPopup() {
 
                     <div className="p-4 flex justify-between items-start">
                       <div className="flex-1">
-                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">
-                          Project Note
-                        </div>
+                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Project Note</div>
                         <p className="text-sm text-gray-300 whitespace-pre-wrap">
-                          {formData.overview || <span className="italic text-gray-600">
-                              No description provided
-                            </span>}
+                          {formData.overview || <span className="italic text-gray-600">No description provided</span>}
                         </p>
                       </div>
                       <button onClick={() => setStep(1)} className="p-2 hover:bg-white/10 rounded-full text-gray-400 transition-colors">
@@ -853,35 +658,26 @@ export function MasterPopup() {
                       {isSubmitting ? 'Confirming...' : 'Confirm Booking'}
                     </Button>
                   </div>
-                </motion.div>}
+                </motion.div>
+              )}
 
               {/* STEP 5: Success */}
-              {step === 5 && <motion.div initial={{
-              opacity: 0,
-              scale: 0.9
-            }} animate={{
-              opacity: 1,
-              scale: 1
-            }} className="text-center py-10 flex flex-col items-center justify-center h-full">
+              {step === 5 && (
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10 flex flex-col items-center justify-center h-full">
                   <div className="w-24 h-24 bg-[color:var(--vibrant-green)]/20 rounded-full flex items-center justify-center mb-6 animate-bounce">
                     <Check size={48} className="text-[color:var(--vibrant-green)]" />
                   </div>
-                  <h2 className="text-4xl font-bold text-white mb-4">
-                    Booking Confirmed!
-                  </h2>
+                  <h2 className="text-4xl font-bold text-white mb-4">Booking Confirmed!</h2>
                   <p className="text-gray-400 mb-8 max-w-md">
-                    We've sent a confirmation email to{' '}
-                    <span className="text-white">{formData.email}</span>. Our
-                    team is analyzing your requirements and will be ready for
-                    our call.
+                    We've sent a confirmation email to <span className="text-white">{formData.email}</span>. Our team is analyzing your requirements and will be ready for our call.
                   </p>
-                  <div className="text-xs text-gray-500">
-                    Closing in a few seconds...
-                  </div>
-                </motion.div>}
+                  <div className="text-xs text-gray-500">Closing in a few seconds...</div>
+                </motion.div>
+              )}
             </div>
           </div>
         </motion.div>
       </div>
-    </AnimatePresence>;
+    </AnimatePresence>
+  );
 }
