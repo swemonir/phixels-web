@@ -11,7 +11,7 @@ export function FileUpload({
   files,
   onFilesChange,
   maxSizeMB = 10,
-  acceptedTypes = ['image/*', '.pdf', '.doc', '.docx']
+  acceptedTypes = ['image/*', '.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png']
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);

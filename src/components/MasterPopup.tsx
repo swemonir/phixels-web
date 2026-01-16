@@ -530,12 +530,12 @@ export function MasterPopup() {
                 </p>
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { name: 'TechCorp', color: '#4285F4' },
-                    { name: 'DataFlow', color: '#34A853' },
-                    { name: 'CloudSync', color: '#FBBC05' },
-                    { name: 'NexGen', color: '#EA4335' },
-                    { name: 'ByteWave', color: '#9C27B0' },
-                    { name: 'CodeLabs', color: '#FF6F00' }
+                    { name: 'TechCorp', color: '--ice-grey' },
+                    { name: 'DataFlow', color: '--ice-grey' },
+                    { name: 'CloudSync', color: '--ice-grey' },
+                    { name: 'NexGen', color: '--ice-grey' },
+                    { name: 'ByteWave', color: '--ice-grey' },
+                    { name: 'CodeLabs', color: '--ice-grey' }
                   ].map((brand, i) => (
                     <div key={i} className="h-10 bg-white/5 rounded flex items-center justify-center hover:bg-white/10 transition-colors group cursor-default">
                       <span className="text-[10px] font-bold" style={{ color: brand.color }}>
@@ -581,8 +581,8 @@ export function MasterPopup() {
               {/* STEP 1: Info & Files */}
               {step === 1 && (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="space-y-1 w-full">
                       <label className="text-xs text-gray-400">Full Name *</label>
                       <input
                         name="fullName"
@@ -602,10 +602,10 @@ export function MasterPopup() {
                       )}
                     </div>
 
-                    <div className="space-y-1 relative" ref={countryDropdownRef}>
+                    <div className="space-y-1 relative w-full" ref={countryDropdownRef}>
                       <label className="text-xs text-gray-400">Phone *</label>
-                      <div className="flex gap-2 flex-wrap sm:flex-nowrap"> {/* Responsive flex */}
-                        <div className="relative">
+                      <div className="flex w-full gap-2 sm:flex-nowrap"> {/* Responsive flex */}
+                        <div className="relative shrink-0">
                           <button
                             type="button"
                             onClick={() => setShowCountryDropdown(!showCountryDropdown)}
@@ -648,7 +648,7 @@ export function MasterPopup() {
                         <input
                           name="phone"
                           type="tel"
-                          className={`flex-1 bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`}
+                          className={`w-full flex-1 min-w-0 bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`}
                           placeholder="123 456 7890"
                           value={formData.phone}
                           onChange={e => {
