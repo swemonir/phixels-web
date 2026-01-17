@@ -253,7 +253,7 @@ export function ContactPage() {
     phone: '',
     message: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(COUNTRY_CODES.find(c => c.country === 'US') || COUNTRY_CODES[0]); // US default
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
@@ -295,8 +295,9 @@ export function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return; // Prevent multiple submissions
     if (!validateForm()) return;
-    setIsSubmitting(true);
+    setSubmitting(true);
     setError('');
     const phone = selectedCountry.code + formData.phone;
     try {
@@ -320,7 +321,6 @@ export function ContactPage() {
       }
 
       const data = await response.json();
-      console.log('Contact form response:', data);
       if (data.success) {
         setShowSuccessModal(true);
         setFormData({
@@ -330,14 +330,12 @@ export function ContactPage() {
           message: ''
         });
       } else {
-        console.log('Contact form error:', data.error);
         setError(data.error || 'Something went wrong.');
       }
     } catch (err) {
-      console.error('Contact form submission error:', err);
       setError('Network error. Please try again.');
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
   return <main className="bg-[#050505] min-h-screen pt-48 pb-20 overflow-hidden">
@@ -553,8 +551,8 @@ export function ContactPage() {
                       )}
                       </div>
 
-                      <Button type="submit" variant="primary" glow className="w-full py-4 text-lg" disabled={isSubmitting}>
-                        {isSubmitting ? 'Sending...' : <span className="flex items-center justify-center gap-2">
+                      <Button type="submit" variant="primary" glow className="w-full py-4 text-lg" disabled={submitting}>
+                        {submitting ? 'Sending...' : <span className="flex items-center justify-center gap-2">
                             Send Message <Send className="w-5 h-5" />
                           </span>}
                       </Button>

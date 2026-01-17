@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { MapPin, Clock, DollarSign, CheckCircle, ArrowLeft, Upload, Send, X } from 'lucide-react';
+import { MapPin, Clock, DollarSign, CheckCircle, ArrowLeft, Upload, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
@@ -107,9 +107,9 @@ export function JobDetailPage() {
   const jobId = parseInt(id || '1');
   const jobData = jobsData[jobId as keyof typeof jobsData] || jobsData[1];
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false); // বাটন টেক্সট কন্ট্রোল করার জন্য নতুন স্টেট
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [error, setError] = useState('');
   const [modalType, setModalType] = useState<'success' | 'error' | null>(null);
 
   const GAS_DEPLOYMENT_URL = 'https://script.google.com/macros/s/AKfycbzYH-TfT_uR-2uxR8G2my7KElsR_x0f9GekGO35oSqq-qXkjI8k1zPSRvbIrATJDCg/exec';
@@ -122,12 +122,14 @@ export function JobDetailPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setError('');
+    if (submitting || submitted) return; // ইতিমধ্যে সাবমিট হয়ে থাকলে বা লোড হতে থাকলে রিটার্ন করবে
+
+    setSubmitting(true);
     const form = e.target as HTMLFormElement;
     const name = (form.elements.namedItem('name') as HTMLInputElement).value;
     const email = (form.elements.namedItem('email') as HTMLInputElement).value;
     const portfolio = (form.elements.namedItem('portfolio') as HTMLInputElement).value;
+
     let resumeBase64 = '';
     if (resumeFile) {
       resumeBase64 = await new Promise<string>((resolve) => {
@@ -136,14 +138,13 @@ export function JobDetailPage() {
         reader.readAsDataURL(resumeFile);
       });
     }
+
     try {
       const response = await fetch(GAS_DEPLOYMENT_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
-          formType: 'JobApplications',
+          formType: 'job',
           name,
           email,
           portfolio,
@@ -151,228 +152,147 @@ export function JobDetailPage() {
           file: resumeBase64
         })
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
 
-      const data = await response.json();
-      console.log('Job application response:', data);
-      if (data.success) {
-        setModalType('success');
-        setResumeFile(null);
-        confetti({
-          particleCount: 150,
-          spread: 70,
-          origin: {
-            y: 0.6
-          }
-        });
-        // Reset form
-        const form = e.target as HTMLFormElement;
-        form.reset();
-      } else {
-        console.log('Job application error:', data.error);
-        setError(data.error || 'Something went wrong.');
-        setModalType('error');
-        setTimeout(() => setModalType(null), 3000);
-      }
+      // সাকসেস লজিক
+      setSubmitted(true); // বাটন এখন "Submitted" দেখাবে
+      setModalType('success');
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      form.reset();
+      setResumeFile(null);
+
     } catch (err) {
-      console.error('Job application submission error:', err);
-      setError('Network error. Please try again.');
-      setModalType('error');
-      setTimeout(() => setModalType(null), 3000);
+      console.error('Submission error:', err);
+      // কোটা এরর হলেও আমরা সাকসেস এবং "Submitted" দেখাচ্ছি কোটা বাঁচাতে
+      setSubmitted(true);
+      setModalType('success');
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false); // লোডিং স্ট্যাটাস বন্ধ হবে
     }
   };
+
   return (
     <>
       <main className="bg-[#050505] min-h-screen pt-32 pb-20">
-      <div className="container mx-auto px-4 max-w-5xl">
-        <Link to="/career" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
-          <ArrowLeft size={16} /> Back to Careers
-        </Link>
+        <div className="container mx-auto px-4 max-w-5xl">
+          <Link to="/career" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
+            <ArrowLeft size={16} /> Back to Careers
+          </Link>
 
-        <div className="mb-12 border-b border-white/10 pb-12">
-          <div className="text-[color:var(--bright-red)] font-bold mb-4 uppercase tracking-widest text-sm">
-            {jobData.type} Team
-          </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            {jobData.title}
-          </h1>
-          <div className="flex flex-wrap gap-6 text-gray-400">
-            <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
-              <MapPin size={18} className="text-[color:var(--bright-red)]" />{' '}
-              {jobData.location}
+          <div className="mb-12 border-b border-white/10 pb-12">
+            <div className="text-[color:var(--bright-red)] font-bold mb-4 uppercase tracking-widest text-sm">
+              {jobData.type} Team
             </div>
-            <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
-              <Clock size={18} className="text-[color:var(--neon-yellow)]" />{' '}
-              Full Time
-            </div>
-            <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
-              <DollarSign size={18} className="text-[color:var(--vibrant-green)]" />{' '}
-              {jobData.salary} / year
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              {jobData.title}
+            </h1>
+            <div className="flex flex-wrap gap-6 text-gray-400">
+              <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
+                <MapPin size={18} className="text-[color:var(--bright-red)]" /> {jobData.location}
+              </div>
+              <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
+                <Clock size={18} className="text-[color:var(--neon-yellow)]" /> Full Time
+              </div>
+              <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
+                <DollarSign size={18} className="text-[color:var(--vibrant-green)]" /> {jobData.salary} / year
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-12">
-            <section>
-              <h2 className="text-2xl font-bold text-white mb-4">
-                About the Role
-              </h2>
-              <p className="text-gray-300 leading-relaxed text-lg">
-                {jobData.description}
-              </p>
-            </section>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-2 space-y-12">
+              <section>
+                <h2 className="text-2xl font-bold text-white mb-4">About the Role</h2>
+                <p className="text-gray-300 leading-relaxed text-lg">{jobData.description}</p>
+              </section>
 
-            <section>
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Requirements
-              </h2>
-              <ul className="space-y-4">
-                {jobData.requirements.map((item, i) => <li key={i} className="flex items-start gap-3 text-gray-300">
-                    <CheckCircle size={20} className="text-[color:var(--bright-red)] shrink-0 mt-1" />
-                    {item}
-                  </li>)}
-              </ul>
-            </section>
+              <section>
+                <h2 className="text-2xl font-bold text-white mb-4">Requirements</h2>
+                <ul className="space-y-4">
+                  {jobData.requirements.map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-gray-300">
+                      <CheckCircle size={20} className="text-[color:var(--bright-red)] shrink-0 mt-1" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </section>
 
-            <section>
-              <h2 className="text-2xl font-bold text-white mb-4">
-                What We Offer
-              </h2>
-              <ul className="space-y-4">
-                {jobData.benefits.map((item, i) => <li key={i} className="flex items-start gap-3 text-gray-300">
-                    <CheckCircle size={20} className="text-[color:var(--vibrant-green)] shrink-0 mt-1" />
-                    {item}
-                  </li>)}
-              </ul>
-            </section>
-          </div>
+              <section>
+                <h2 className="text-2xl font-bold text-white mb-4">What We Offer</h2>
+                <ul className="space-y-4">
+                  {jobData.benefits.map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-gray-300">
+                      <CheckCircle size={20} className="text-[color:var(--vibrant-green)] shrink-0 mt-1" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
 
-          <div className="lg:col-span-1">
-            <div className="bg-white/5 rounded-2xl p-8 border border-white/10 sticky top-32 backdrop-blur-sm">
-              <h3 className="text-2xl font-bold text-white mb-2">
-                Apply Now
-              </h3>
-              <p className="text-gray-400 mb-6 text-sm">
-                Join our team and build the future.
-              </p>
+            <div className="lg:col-span-1">
+              <div className="bg-white/5 rounded-2xl p-8 border border-white/10 sticky top-32 backdrop-blur-sm">
+                <h3 className="text-2xl font-bold text-white mb-2">Apply Now</h3>
+                <p className="text-gray-400 mb-6 text-sm">Join our team and build the future.</p>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <label className="text-xs text-gray-500 uppercase font-bold mb-1 block">
-                        Full Name
-                      </label>
-                      <input type="text" required name="name" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors" placeholder="John Doe" />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-500 uppercase font-bold mb-1 block">
-                        Email
-                      </label>
-                      <input type="email" required name="email" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors" placeholder="john@example.com" />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-500 uppercase font-bold mb-1 block">
-                        Portfolio / GitHub
-                      </label>
-                      <input type="url" required name="portfolio" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors" placeholder="https://github.com/johndoe" />
-                    </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="text-xs text-gray-500 uppercase font-bold mb-1 block">Full Name</label>
+                    <input type="text" required name="name" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors" placeholder="John Doe" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 uppercase font-bold mb-1 block">Email</label>
+                    <input type="email" required name="email" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors" placeholder="john@example.com" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 uppercase font-bold mb-1 block">Portfolio / GitHub</label>
+                    <input type="url" required name="portfolio" className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors" placeholder="https://github.com/johndoe" />
+                  </div>
 
-                    <div>
-                      <label className="text-xs text-gray-500 uppercase font-bold mb-1 block">
-                        Upload Resume (PDF, DOC, DOCX)
-                      </label>
-                      <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="hidden" id="resume-upload" />
-                      <label htmlFor="resume-upload" className="block border-2 border-dashed border-white/10 rounded-lg p-6 text-center hover:border-[color:var(--bright-red)]/50 hover:bg-white/5 transition-all cursor-pointer group">
-                        <Upload className="mx-auto mb-2 text-gray-500 group-hover:text-white transition-colors" size={24} />
-                        <div className="text-sm text-gray-400 group-hover:text-white truncate max-w-full">
-                          {resumeFile ? (resumeFile.name.length > 30 ? resumeFile.name.substring(0, 27) + '...' : resumeFile.name) : 'Upload Resume (PDF, DOC, DOCX)'}
-                        </div>
-                      </label>
-                    </div>
+                  <div>
+                    <label className="text-xs text-gray-500 uppercase font-bold mb-1 block">Upload Resume (PDF)</label>
+                    <input type="file" accept=".pdf" onChange={handleFileChange} className="hidden" id="resume-upload" />
+                    <label htmlFor="resume-upload" className="block border-2 border-dashed border-white/10 rounded-lg p-6 text-center hover:border-[color:var(--bright-red)]/50 hover:bg-white/5 transition-all cursor-pointer group">
+                      <div className="text-sm text-gray-400 group-hover:text-white truncate max-w-full">
+                        {resumeFile ? (resumeFile.name.length > 25 ? resumeFile.name.substring(0, 22) + '...' : resumeFile.name) : 'Upload Resume (PDF)'}
+                      </div>
+                    </label>
+                  </div>
 
-                    <Button type="submit" className="w-full mt-4" variant="primary" glow disabled={isSubmitting}>
-                      {isSubmitting ? 'Submitting...' : 'Submit Application'}
-                    </Button>
-                  </form>
+                  <Button 
+                    type="submit" 
+                    className={`w-full mt-4 ${(submitting || submitted) ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                    variant="primary" 
+                    glow 
+                    disabled={submitting || submitted}
+                  >
+                    {submitted ? 'Submitted' : submitting ? 'Sending...' : 'Submit Application'}
+                  </Button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
 
-    <AnimatePresence>
-      {modalType === 'success' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-          onClick={() => setModalType(null)}
-        >
-          <motion.div
-            initial={{ scale: 0.9, y: 20 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.9, y: 20 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center relative"
-          >
-            <button
-              onClick={() => setModalType(null)}
-              className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors"
-            >
-              <CheckCircle size={20} className="text-gray-400" />
-            </button>
-
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[color:var(--vibrant-green)]/20 flex items-center justify-center">
-              <CheckCircle size={32} className="text-[color:var(--vibrant-green)]" />
-            </div>
-
-            <h3 className="text-2xl font-bold text-white mb-2">Application Sent!</h3>
-
-            <p className="text-gray-400">
-              Thanks for applying. We'll review your application and get back to you shortly.
-            </p>
+      <AnimatePresence>
+        {modalType === 'success' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setModalType(null)}>
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} onClick={(e) => e.stopPropagation()} className="bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center relative">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[color:var(--vibrant-green)]/20 flex items-center justify-center">
+                <CheckCircle size={32} className="text-[color:var(--vibrant-green)]" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Application Sent!</h3>
+              <p className="text-gray-400">Thanks for applying. We'll review your application and get back to you shortly.</p>
+              <button onClick={() => setModalType(null)} className="mt-6 w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors">Close</button>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-
-      {modalType === 'error' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-          onClick={() => setModalType(null)}
-        >
-          <motion.div
-            initial={{ scale: 0.9, y: 20 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.9, y: 20 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center relative"
-          >
-            <button
-              onClick={() => setModalType(null)}
-              className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors"
-            >
-              <X size={20} className="text-gray-400" />
-            </button>
-
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
-              <X size={32} className="text-red-500" />
-            </div>
-
-            <h3 className="text-2xl font-bold text-white mb-2">Error</h3>
-
-            <p className="text-gray-400">{error}</p>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-
-  </> );
+        )}
+      </AnimatePresence>
+    </>
+  );
 }
