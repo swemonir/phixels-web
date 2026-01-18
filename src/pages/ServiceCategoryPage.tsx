@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { CountUpStats } from '../components/CountUpStats';
 import { Smartphone, Globe, Code, Brain, Blocks, Building2, Zap, ArrowRight, CheckCircle, Layers } from 'lucide-react';
+import { ProfessionalReviewCarousel } from '../components/ProfessionalReviewCarousel';
 // Duplicated data to avoid modifying other files excessively
 const servicesData = [{
   id: 'mobile',
@@ -227,6 +228,9 @@ export function ServiceCategoryPage() {
           </div>
         </div>
       </section>
+      
+{/* New Professional Review Section */}
+      <ProfessionalReviewCarousel />
 
       {/* CTA */}
       <section className="container mx-auto px-4 text-center">

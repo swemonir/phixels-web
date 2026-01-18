@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, CheckCircle, Quote } from 'lucide-react';
-// Mock Data for Reviews with Professional Unsplash Images
+import { Star, CheckCircle } from 'lucide-react';
+
+// Mock Data
 const reviews = [{
   name: 'Sarah Mitchell',
   role: 'CEO, TechVenture Inc',
-  image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&q=80',
+  image: "/sarah-mitchell.webp",
   rating: 5,
   review: 'Working with this team transformed our digital presence completely. They delivered a sophisticated e-commerce platform that increased our conversion rate by 145% within the first quarter. Their attention to detail and commitment to our success was exceptional.',
   project: 'E-commerce Platform Development',
@@ -15,7 +16,7 @@ const reviews = [{
 }, {
   name: 'Michael Chen',
   role: 'Founder, FinanceFlow',
-  image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&q=80',
+  image: "/michael-chen.webp",
   rating: 5,
   review: 'The mobile app they built exceeded all our expectations. The user experience is seamless, and our customer engagement has tripled since launch. They understood our vision perfectly and delivered a product that truly stands out in the market.',
   project: 'Financial Management Mobile App',
@@ -25,7 +26,7 @@ const reviews = [{
 }, {
   name: 'Emily Rodriguez',
   role: 'Marketing Director, GrowthLabs',
-  image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&q=80',
+  image: "/emily-rodriguez.webp",
   rating: 5,
   review: "Their strategic approach to our SaaS platform redesign was impressive. Not only did they modernize our interface, but they also improved our user retention by 67%. The team's expertise in both design and development is truly world-class.",
   project: 'SaaS Platform Redesign & Optimization',
@@ -35,7 +36,7 @@ const reviews = [{
 }, {
   name: 'David Park',
   role: 'CTO, HealthTech Solutions',
-  image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&q=80',
+  image: "/david-park.webp",
   rating: 5,
   review: 'Building a HIPAA-compliant healthcare platform required expertise and precision. This team delivered both flawlessly. The system handles thousands of patient records securely, and our clients trust it completely. Outstanding work from start to finish.',
   project: 'Healthcare Management System',
@@ -43,9 +44,9 @@ const reviews = [{
   duration: '5 months',
   summary: 'HIPAA-compliant patient management platform with secure data encryption, appointment scheduling, telemedicine integration, and comprehensive reporting tools.'
 }, {
-  name: 'Jessica Thompson',
+  name: 'Davis Lee',
   role: 'VP Operations, LogisticsPro',
-  image: 'https://images.unsplash.com/photo-1598550874175-4d7112ee7f38?w=400&h=400&fit=crop&q=80',
+  image: "/davis-lee.webp",
   rating: 5,
   review: 'The logistics tracking system they developed revolutionized our operations. Real-time tracking, automated reporting, and intuitive dashboards have saved us countless hours. Their technical expertise and project management were exceptional throughout.',
   project: 'Logistics & Supply Chain Platform',
@@ -55,7 +56,7 @@ const reviews = [{
 }, {
   name: 'Robert Anderson',
   role: 'Director, EduTech Academy',
-  image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&q=80',
+  image: "/robert-anderson.webp",
   rating: 5,
   review: "Our online learning platform needed to scale to support 50,000+ students. They architected a solution that's not only robust but also incredibly user-friendly. Student engagement increased by 89%, and our instructors love the new tools.",
   project: 'Online Learning Management System',
@@ -65,7 +66,7 @@ const reviews = [{
 }, {
   name: 'Amanda Foster',
   role: 'Founder, StyleHub',
-  image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=400&fit=crop&q=80',
+  image: "/amanda-foster.webp",
   rating: 5,
   review: 'The fashion marketplace they created is stunning and functional. The AR try-on feature they implemented was a game-changer for our business. Sales increased by 210% in the first six months. Truly innovative work.',
   project: 'Fashion E-commerce with AR Features',
@@ -75,7 +76,7 @@ const reviews = [{
 }, {
   name: 'James Wilson',
   role: 'CEO, PropertyMatch',
-  image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&q=80',
+  image: "/james-wilson.webp",
   rating: 5,
   review: 'Our real estate platform needed sophisticated search capabilities and virtual tour integration. They delivered beyond expectations. The 3D property tours and AI-powered matching system have set us apart from competitors. Exceptional quality.',
   project: 'Real Estate Platform with Virtual Tours',
@@ -83,9 +84,11 @@ const reviews = [{
   duration: '4 months',
   summary: 'Comprehensive real estate platform with 3D virtual tours, advanced property search, AI-powered matching, mortgage calculator, and agent management system.'
 }];
+
 export function ProfessionalReviewCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
@@ -93,10 +96,13 @@ export function ProfessionalReviewCarousel() {
     }, 6000);
     return () => clearInterval(timer);
   }, [isPaused]);
+
   const handleDotClick = (index: number) => {
     setCurrentIndex(index);
   };
-  return <section className="py-24 bg-[#050505] text-white overflow-hidden">
+
+  return (
+    <section className="py-24 bg-[#050505] text-white overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-16 text-center md:text-left">
@@ -109,24 +115,39 @@ export function ProfessionalReviewCarousel() {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative w-full max-w-7xl mx-auto" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
+        <div 
+          className="relative w-full max-w-7xl mx-auto" 
+          onMouseEnter={() => setIsPaused(true)} 
+          onMouseLeave={() => setIsPaused(false)}
+        >
           <div className="relative min-h-[600px] md:min-h-[450px] bg-[#0A0A0A] rounded-3xl border border-white/10 p-8 md:p-12 shadow-2xl overflow-hidden">
             <AnimatePresence mode="wait">
-              <motion.div key={currentIndex} initial={{
-              opacity: 0,
-              x: 50
-            }} animate={{
-              opacity: 1,
-              x: 0
-            }} exit={{
-              opacity: 0,
-              x: -50
-            }} transition={{
-              duration: 0.5,
-              ease: 'easeInOut'
-            }} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 h-full items-center">
-                {/* Left Column: Review Content (5 cols) */}
-                <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1">
+              <motion.div 
+                key={currentIndex} 
+                
+                // --- FAST DRAG LOGIC ---
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.02} // রাবার ইফেক্ট প্রায় শূন্য করে দিয়েছি
+                onDragEnd={(e, { offset }) => {
+                  const swipeThreshold = 10; // খুব সামান্য টানলেই কাজ করবে
+                  if (offset.x < -swipeThreshold) {
+                    setCurrentIndex((prev) => (prev + 1) % reviews.length);
+                  } else if (offset.x > swipeThreshold) {
+                    setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+                  }
+                }}
+                
+                initial={{ opacity: 0, x: 20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: -20 }} 
+                // --- PROFESSIONAL FAST TRANSITION ---
+                transition={{ duration: 0.3, ease: 'easeOut' }} 
+                
+                className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 h-full items-center cursor-grab active:cursor-grabbing"
+              >
+                {/* Left Column: Review Content */}
+                <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1 select-none">
                   <div className="flex items-center gap-4 mb-6">
                     <span className="text-6xl font-bold text-white leading-none">
                       {reviews[currentIndex].rating}
@@ -158,16 +179,16 @@ export function ProfessionalReviewCarousel() {
                   </div>
                 </div>
 
-                {/* Center Column: Image (3 cols) */}
-                <div className="lg:col-span-3 flex justify-center items-center order-1 lg:order-2">
-                  <div className="relative w-full max-w-[280px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl group ring-4 ring-white">
+                {/* Center Column: Image */}
+                <div className="lg:col-span-3 flex justify-center items-center order-1 lg:order-2 select-none">
+                  <div className="relative w-full max-w-[280px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl group ring-4 ring-white pointer-events-none">
                     <img src={reviews[currentIndex].image} alt={reviews[currentIndex].name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60" />
                   </div>
                 </div>
 
-                {/* Right Column: Project Info (4 cols) */}
-                <div className="lg:col-span-4 flex flex-col justify-center order-3">
+                {/* Right Column: Project Info */}
+                <div className="lg:col-span-4 flex flex-col justify-center order-3 select-none">
                   <h3 className="text-2xl font-bold text-white mb-4 leading-tight">
                     {reviews[currentIndex].project}
                   </h3>
@@ -217,9 +238,17 @@ export function ProfessionalReviewCarousel() {
 
           {/* Navigation Dots */}
           <div className="flex justify-center gap-3 mt-8">
-            {reviews.map((_, index) => <button key={index} onClick={() => handleDotClick(index)} className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? 'w-8 bg-[color:var(--bright-red)]' : 'w-2 bg-white/20 hover:bg-white/40'}`} aria-label={`Go to review ${index + 1}`} />)}
+            {reviews.map((_, index) => (
+              <button 
+                key={index} 
+                onClick={() => handleDotClick(index)} 
+                className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? 'w-8 bg-[color:var(--bright-red)]' : 'w-2 bg-white/20 hover:bg-white/40'}`} 
+                aria-label={`Go to review ${index + 1}`} 
+              />
+            ))}
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 }

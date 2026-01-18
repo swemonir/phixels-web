@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { Zap, Layers, Cpu, ArrowRight } from 'lucide-react';
 import { TechStack } from '../components/TechStack';
+import { ProfessionalReviewCarousel } from '../components/ProfessionalReviewCarousel';
 export function ServiceDetailPage() {
   const {
     category,
@@ -98,6 +99,9 @@ export function ServiceDetailPage() {
           </div>
         </div>
       </section>
+
+       {/* New Professional Review Section */}
+            <ProfessionalReviewCarousel />
 
       {/* CTA */}
       <section className="container mx-auto px-4 py-20">

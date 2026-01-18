@@ -5,49 +5,49 @@ const reviews = [{
   id: 1,
   name: 'Sarah Jenkins',
   role: 'CTO, FinTech Global',
-  image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100',
+  image: "/sarah-mitchell.webp",
   text: 'Phixels transformed our legacy system into a modern powerhouse. Revenue increased by 40% in just 3 months after launch. Their engineering team is world-class.',
   rating: 5
 }, {
   id: 2,
   name: 'Michael Chang',
   role: 'Founder, HealthAI',
-  image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&h=100',
+  image: "/michael-chen.webp",
   text: 'The AI integration they built for our diagnostic tool is revolutionary. We secured Series A funding solely based on the MVP Phixels delivered.',
   rating: 5
 }, {
   id: 3,
   name: 'Elena Rodriguez',
   role: 'VP of Product, E-Comm Giant',
-  image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&h=100',
+  image: "/elena-rodiguezr.webp",
   text: 'Scalability was our biggest issue. Phixels re-architected our backend to handle 10M+ concurrent users without a glitch during Black Friday.',
   rating: 5
 }, {
   id: 4,
   name: 'David Wright',
   role: 'Director, BlockChain Solutions',
-  image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100',
+  image: "/david-park.webp",
   text: 'Their understanding of Smart Contracts and DeFi protocols is unmatched. They delivered a secure, audited platform ahead of schedule.',
   rating: 5
 }, {
   id: 5,
   name: 'Jessica Lee',
   role: 'CEO, OnDemand App',
-  image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&h=100',
+  image: "/jessica.webp",
   text: 'From concept to app store in 12 weeks. The UI/UX is stunning, and user retention is up 200% compared to our old app.',
   rating: 5
 }, {
   id: 6,
   name: 'Robert Fox',
   role: 'Head of Innovation, AutoTech',
-  image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&h=100',
+  image: "/robert-anderson.webp",
   text: 'We needed a partner who could understand complex IoT requirements. Phixels delivered a robust solution that connects thousands of devices seamlessly.',
   rating: 5
 }, {
   id: 7,
   name: 'Amanda Chen',
   role: 'Marketing Director, SaaS Co',
-  image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100',
+  image: "/amanda-foster.webp",
   text: 'Their web development team is incredible. Our new site is blazing fast, SEO optimized, and conversion rates have doubled.',
   rating: 5
 }];

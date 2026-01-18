@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Smartphone, Globe, Code, Brain, Blocks, Building2, Zap, ArrowRight, Sparkles, ChevronRight } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { CountUpStats } from '../components/CountUpStats';
+import { ProfessionalReviewCarousel } from '../components/ProfessionalReviewCarousel';
 const servicesData = [{
   id: 'mobile',
   name: 'Mobile App Development',
@@ -167,6 +168,9 @@ export function ServicesPage() {
             </motion.div>)}
         </div>
       </section>
+
+          {/* New Professional Review Section */}
+            <ProfessionalReviewCarousel />
 
       {/* Stats Section */}
       <section className="container mx-auto px-4 mb-24">
