@@ -184,7 +184,10 @@ export function PortfolioPage() {
         }} viewport={{
           once: true
         }} className="group flex flex-col md:flex-row gap-8 md:gap-16 items-center">
+
+          <div className='flex gap-8 w-full bg-[#111111] p-6 rounded-2xl border border-white/10 relative'>
               {/* Image */}
+              
               <div className={`w-full md:w-[45%] aspect-video rounded-2xl overflow-hidden relative ${index % 2 === 1 ? 'md:order-2' : ''}`}>
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10" />
                 <img src={project.image} alt={project.title} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
@@ -196,7 +199,9 @@ export function PortfolioPage() {
               </div>
 
               {/* Content */}
-              <div className="w-full md:w-[55%] space-y-6">
+            
+
+              <div className="w-full md:w-[55%] space-y-6 h-full relative">
                 <h2 className="text-4xl md:text-5xl font-bold text-white group-hover:text-[color:var(--bright-red)] transition-colors">
                   {project.title}
                 </h2>
@@ -214,7 +219,7 @@ export function PortfolioPage() {
                       {tech}
                     </span>)}
                 </div>
-                <div className="flex items-center gap-8 pt-4">
+                <div className="flex items-center gap-8 pt-4 absolute -bottom-36 w-full">
                   <div>
                     <div className="text-3xl font-bold text-white">
                       {project.stats}
@@ -228,6 +233,8 @@ export function PortfolioPage() {
                     <ExternalLink className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" size={18} />
                   </a>
                 </div>
+                </div>
+              
               </div>
             </motion.div>)}
         </div>
