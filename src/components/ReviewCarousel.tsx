@@ -3,29 +3,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 const reviews = [{
   id: 1,
-  name: 'Sarah Jenkins',
-  role: 'CTO, FinTech Global',
+  name: 'Sarah Mitchell',
+  role: 'CEO, TechVenture Inc.',
   image: "/sarah-mitchell.webp",
   text: 'Phixels transformed our legacy system into a modern powerhouse. Revenue increased by 40% in just 3 months after launch. Their engineering team is world-class.',
   rating: 5
 }, {
   id: 2,
-  name: 'Michael Chang',
-  role: 'Founder, HealthAI',
+  name: 'Michael Chen',
+  role: 'Founder, FinanceFlow',
   image: "/michael-chen.webp",
   text: 'The AI integration they built for our diagnostic tool is revolutionary. We secured Series A funding solely based on the MVP Phixels delivered.',
   rating: 5
 }, {
   id: 3,
-  name: 'Elena Rodriguez',
-  role: 'VP of Product, E-Comm Giant',
+  name: 'Emily Rodriguez',
+  role: 'Marketing Director, GrowthLabs',
   image: "/elena-rodiguezr.webp",
   text: 'Scalability was our biggest issue. Phixels re-architected our backend to handle 10M+ concurrent users without a glitch during Black Friday.',
   rating: 5
 }, {
   id: 4,
-  name: 'David Wright',
-  role: 'Director, BlockChain Solutions',
+  name: 'David Park',
+  role: 'CTO, HealthTech Solutions',
   image: "/david-park.webp",
   text: 'Their understanding of Smart Contracts and DeFi protocols is unmatched. They delivered a secure, audited platform ahead of schedule.',
   rating: 5
@@ -38,15 +38,15 @@ const reviews = [{
   rating: 5
 }, {
   id: 6,
-  name: 'Robert Fox',
-  role: 'Head of Innovation, AutoTech',
+  name: 'Robert Anderson',
+  role: 'Director, EduTech Academy',
   image: "/robert-anderson.webp",
   text: 'We needed a partner who could understand complex IoT requirements. Phixels delivered a robust solution that connects thousands of devices seamlessly.',
   rating: 5
 }, {
   id: 7,
-  name: 'Amanda Chen',
-  role: 'Marketing Director, SaaS Co',
+  name: 'Amanda Foster',
+  role: 'Founder, StyleHub',
   image: "/amanda-foster.webp",
   text: 'Their web development team is incredible. Our new site is blazing fast, SEO optimized, and conversion rates have doubled.',
   rating: 5

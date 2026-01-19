@@ -293,7 +293,7 @@ export function Footer() {
                   <button 
                     type="submit" 
                     disabled={submitting || submitted} 
-                    className="bg-white text-black font-bold px-4 py-2 rounded-lg text-sm hover:bg-[color:var(--bright-red)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px]"
+                    className="bg-white text-black font-bold px-4 py-2 rounded-lg text-sm hover:bg-[color:var(--bright-red)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed max-w-[80px] overflow-hidden"
                   >
                     {submitted ? 'Joined' : submitting ? '...' : 'Join'}
                   </button>

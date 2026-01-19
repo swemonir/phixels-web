@@ -540,7 +540,7 @@ export function MasterPopup() {
                     { name: 'CodeLabs', color: '--ice-grey' }
                   ].map((brand, i) => (
                     <div key={i} className="h-10 bg-white/5 rounded flex items-center justify-center hover:bg-white/10 transition-colors group cursor-default">
-                      <span className="text-[10px] font-bold" style={{ color: brand.color }}>
+                      <span className="text-[12px] font-bold text-white/70" style={{ color: brand.color }}>
                         {brand.name}
                       </span>
                     </div>
