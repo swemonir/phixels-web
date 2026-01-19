@@ -16,7 +16,7 @@ const BOOKED_SLOTS = [
   { date: 'Wednesday, January 28', time: '02:00 PM' }
 ];
 
-// Comprehensive country codes with flags (expanded to all countries)
+// Comprehensive country codes with flags
 const COUNTRY_CODES = [
   { code: '+1', country: 'US', flag: '🇺🇸', name: 'United States' },
   { code: '+1', country: 'CA', flag: '🇨🇦', name: 'Canada' },
@@ -363,19 +363,26 @@ export function MasterPopup() {
     const newRequestId = crypto.randomUUID();
     setRequestId(newRequestId);
 
-    // Convert files to Base64
-    const fileBase64 = files.length > 0 ? await fileToBase64(files[0]) : '';
+    // Convert ALL files to Base64 (Updated Logic for Multiple Files)
+    const allFilesData = await Promise.all(files.map(async (file) => {
+      const base64 = await fileToBase64(file);
+      return {
+        name: file.name,
+        type: file.type,
+        data: base64
+      };
+    }));
 
     // Prepare data for Google Apps Script (Step 1 - Lead)
     const formDataPayload = {
       formType: 'master',
       fullName: formData.name,
       email: formData.email,
-      phone: `${selectedCountry.code.replace('+', '')} ${formData.phone}`, // Remove + to avoid sheet formula issues
+      phone: `${selectedCountry.code.replace('+', '')} ${formData.phone}`,
       country: selectedCountry.name,
       budget: formData.budget,
       description: formData.overview,
-      file: fileBase64,
+      filesData: JSON.stringify(allFilesData), // Changed from 'file' to 'filesData' JSON string
       requestId: newRequestId,
       isFinal: 'false'
     };
@@ -397,19 +404,26 @@ export function MasterPopup() {
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
 
-    // Convert files to Base64
-    const fileBase64 = files.length > 0 ? await fileToBase64(files[0]) : '';
+    // Convert ALL files to Base64 (Updated Logic for Multiple Files)
+    const allFilesData = await Promise.all(files.map(async (file) => {
+      const base64 = await fileToBase64(file);
+      return {
+        name: file.name,
+        type: file.type,
+        data: base64
+      };
+    }));
 
     // Prepare data for Google Apps Script (Step 4 - Booking Confirmed)
     const formDataPayload = {
       formType: 'master',
       fullName: formData.name,
       email: formData.email,
-      phone: `${selectedCountry.code.replace('+', '')} ${formData.phone}`, // Remove + to avoid sheet formula issues
+      phone: `${selectedCountry.code.replace('+', '')} ${formData.phone}`,
       country: selectedCountry.name,
       budget: formData.budget,
       description: formData.overview,
-      file: fileBase64,
+      filesData: JSON.stringify(allFilesData), // Changed from 'file' to 'filesData' JSON string
       meetingDate: formData.date,
       meetingTime: formData.time,
       requestId: requestId,
