@@ -786,9 +786,7 @@ export function MasterPopup() {
                   </div>
 
                   <div className="flex gap-3 pt-4">
-                    <button onClick={() => setStep(1)} className="px-6 py-3 rounded-lg border border-white/10 text-white hover:bg-white/5 transition-colors">
-                      Back
-                    </button>
+                    
                     <Button onClick={() => setStep(3)} disabled={!formData.date} className="flex-1">
                       Continue
                     </Button>
@@ -846,9 +844,7 @@ export function MasterPopup() {
                         <div className="text-sm text-gray-400">{formData.email}</div>
                         <div className="text-sm text-gray-400">{`${selectedCountry.code} ${formData.phone}`}</div>
                       </div>
-                      <button onClick={() => setStep(1)} className="p-2 hover:bg-white/10 rounded-full text-gray-400 transition-colors">
-                        <Edit2 size={14} />
-                      </button>
+                      
                     </div>
 
                     <div className="p-4 border-b border-white/10 flex justify-between items-start">
@@ -881,9 +877,7 @@ export function MasterPopup() {
                           <span className="text-sm text-gray-500 italic">No attachments</span>
                         )}
                       </div>
-                      <button onClick={() => setStep(1)} className="p-2 hover:bg-white/10 rounded-full text-gray-400 transition-colors">
-                        <Edit2 size={14} />
-                      </button>
+                      
                     </div>
 
                     <div className="p-4 flex justify-between items-start">
@@ -893,9 +887,7 @@ export function MasterPopup() {
                           {formData.overview || <span className="italic text-gray-600">No description provided</span>}
                         </p>
                       </div>
-                      <button onClick={() => setStep(1)} className="p-2 hover:bg-white/10 rounded-full text-gray-400 transition-colors">
-                        <Edit2 size={14} />
-                      </button>
+                      
                     </div>
                   </div>
 
