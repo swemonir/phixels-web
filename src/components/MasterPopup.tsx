@@ -130,9 +130,41 @@ export function MasterPopup() {
 
   const validateStep1 = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = 'Full Name is required';
-    if (!formData.phone.trim() || !validatePhone(formData.phone, selectedCountry.code)) newErrors.phone = 'Valid phone number required for selected country';
-    if (!formData.email.trim()) newErrors.email = 'Work Email is required';
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = 'Full Name is required';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters long';
+    }
+
+    // Phone validation
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!validatePhone(formData.phone, selectedCountry.code)) {
+      newErrors.phone = 'Please enter a valid phone number for ' + selectedCountry.name;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      newErrors.email = 'Work Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid work email address';
+    }
+
+    // Budget validation
+    if (!formData.budget) {
+      newErrors.budget = 'Please select your budget range';
+    }
+
+    // Overview validation
+    if (!formData.overview.trim()) {
+      newErrors.overview = 'Project description is required';
+    } else if (formData.overview.trim().length < 10) {
+      newErrors.overview = 'Please provide a more detailed description (min. 10 chars)';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -505,6 +537,7 @@ export function MasterPopup() {
                                 onClick={() => {
                                   setFormData({ ...formData, budget: option });
                                   setShowBudgetDropdown(false);
+                                  if (errors.budget) setErrors({ ...errors, budget: '' });
                                 }}
                                 className="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-colors text-sm"
                               >
@@ -514,18 +547,31 @@ export function MasterPopup() {
                           </div>
                         )}
                       </div>
+                      {errors.budget && (
+                        <p className="text-red-500 text-[10px] mt-1 flex items-center gap-1">
+                          <AlertCircle size={10} /> {errors.budget}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-400">Project Description</label>
+                    <label className="text-xs text-gray-400">Project Description *</label>
                     <textarea
                       name="description"
-                      className="w-full h-24 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors resize-none"
+                      className={`w-full h-24 bg-white/5 border rounded-lg px-4 py-3 text-white focus:outline-none transition-colors resize-none ${errors.overview ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-[color:var(--bright-red)]'}`}
                       placeholder="Briefly describe your project vision..."
                       value={formData.overview}
-                      onChange={e => setFormData({ ...formData, overview: e.target.value })}
+                      onChange={e => {
+                        setFormData({ ...formData, overview: e.target.value });
+                        if (errors.overview) setErrors({ ...errors, overview: '' });
+                      }}
                     />
+                    {errors.overview && (
+                      <p className="text-red-500 text-[10px] flex items-center gap-1">
+                        <AlertCircle size={10} /> {errors.overview}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-2">

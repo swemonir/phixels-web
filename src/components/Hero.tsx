@@ -120,7 +120,7 @@ export function Hero() {
           style={{
             y: y2,
           }}
-          className="absolute top-32 right-[5%] hidden lg:block"
+          className="absolute top-8 right-[5%] hidden lg:block"
           whileHover={{
             scale: 1.1,
           }}
