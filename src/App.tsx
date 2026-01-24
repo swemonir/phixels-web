@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { PopupProvider } from './context/PopupContext';
 import { TopMarquee } from './components/TopMarquee';
@@ -35,49 +35,49 @@ function ScrollToTop() {
 }
 export function App() {
   return <PopupProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="min-h-screen bg-[color:var(--pure-black)] text-white font-sans selection:bg-[color:var(--bright-red)] selection:text-white">
-          <TopMarquee />
-          <Navigation />
+    <Router>
+      <ScrollToTop />
+      <div className="min-h-screen bg-[color:var(--pure-black)] text-white font-sans selection:bg-[color:var(--bright-red)] selection:text-white">
+        <TopMarquee />
+        <Navigation />
 
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
 
-            {/* Work Routes */}
-            <Route path="/work" element={<PortfolioPage />} />
-            <Route path="/portfolio" element={<PortfolioPage />} />
-            <Route path="/case-studies" element={<CaseStudiesPage />} />
-            <Route path="/case-studies/:id" element={<CaseStudyDetailPage />} />
+          {/* Work Routes */}
+          <Route path="/work" element={<PortfolioPage />} />
+          <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/case-studies" element={<CaseStudiesPage />} />
+          <Route path="/case-studies/:id" element={<CaseStudyDetailPage />} />
 
-            {/* Career Routes */}
-            <Route path="/career" element={<CareerPage />} />
-            <Route path="/career/:id" element={<JobDetailPage />} />
+          {/* Career Routes */}
+          <Route path="/career" element={<CareerPage />} />
+          <Route path="/career/:id" element={<JobDetailPage />} />
 
-            {/* Blog Routes */}
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:slug" element={<BlogDetailPage />} />
+          {/* Blog Routes */}
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogDetailPage />} />
 
-            {/* Service Routes */}
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/services/:category" element={<ServiceCategoryPage />} />
-            <Route path="/services/:category/:subcategory" element={<ServiceDetailPage />} />
+          {/* Service Routes */}
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:category" element={<ServiceCategoryPage />} />
+          <Route path="/services/:category/:subcategory" element={<ServiceDetailPage />} />
 
-            {/* Products Routes */}
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/products/:id" element={<ProductDetailPage />} />
+          {/* Products Routes */}
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
 
-            {/* Legal */}
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/sitemap" element={<SitemapPage />} />
-          </Routes>
+          {/* Legal */}
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/sitemap" element={<SitemapPage />} />
+        </Routes>
 
-          <Footer />
-          <MasterPopup />
-        </div>
-      </Router>
-    </PopupProvider>;
+        <Footer />
+        <MasterPopup />
+      </div>
+    </Router>
+  </PopupProvider>;
 }

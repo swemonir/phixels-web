@@ -1,212 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-const projects = [
-  {
-    id: 1,
-    title: "FinTech Super App",
-    category: "Mobile Apps",
-    client: "NeoBank",
-    image:
-      "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
-    stats: "1M+ Active Users",
-    stack: ["Flutter", "Node.js", "AWS", "MongoDB"],
-    description:
-      "A comprehensive digital banking solution with AI-powered financial insights, instant transfers, and investment tracking.",
-    link: "https://neobank.example.com",
-  },
-  {
-    id: 2,
-    title: "AI Diagnostic Platform",
-    category: "AI/ML",
-    client: "MediTech Solutions",
-    image:
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-    stats: "99.2% Accuracy Rate",
-    stack: ["Python", "TensorFlow", "React", "PostgreSQL"],
-    description:
-      "Medical imaging analysis platform using deep learning to assist radiologists in early disease detection.",
-    link: "https://meditech.example.com",
-  },
-  {
-    id: 3,
-    title: "NFT Marketplace",
-    category: "Blockchain",
-    client: "CryptoArt",
-    image:
-      "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=800&q=80",
-    stats: "$50M Trading Volume",
-    stack: ["Solidity", "React", "Web3.js", "IPFS"],
-    description:
-      "Decentralized marketplace for digital art with smart contract-based royalties and gas-optimized transactions.",
-    link: "https://cryptoart.example.com",
-  },
-  {
-    id: 4,
-    title: "E-Commerce Platform",
-    category: "Web Apps",
-    client: "ShopFlow",
-    image:
-      "https://images.unsplash.com/photo-1472851294608-415522f96318?auto=format&fit=crop&w=800&q=80",
-    stats: "+250% Revenue Growth",
-    stack: ["Next.js", "Shopify", "Stripe", "Vercel"],
-    description:
-      "High-performance e-commerce platform with personalized recommendations and seamless checkout experience.",
-    link: "https://shopflow.example.com",
-  },
-  {
-    id: 5,
-    title: "Food Delivery App",
-    category: "On-Demand",
-    client: "QuickBite",
-    image:
-      "https://images.unsplash.com/photo-1526367790999-0150786686a2?auto=format&fit=crop&w=800&q=80",
-    stats: "20min Avg Delivery",
-    stack: ["React Native", "Firebase", "Google Maps", "Stripe"],
-    description:
-      "Real-time food delivery platform with live tracking, smart routing, and integrated payment processing.",
-    link: "https://quickbite.example.com",
-  },
-  {
-    id: 6,
-    title: "Enterprise ERP System",
-    category: "Enterprise",
-    client: "GlobalCorp",
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-    stats: "10K+ Employees",
-    stack: ["Java", "Spring Boot", "Angular", "Oracle"],
-    description:
-      "Comprehensive ERP solution managing inventory, HR, finance, and supply chain operations.",
-    link: "https://globalcorp.example.com",
-  },
-  {
-    id: 7,
-    title: "Telemedicine Platform",
-    category: "Mobile Apps",
-    client: "HealthConnect",
-    image:
-      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80",
-    stats: "50K+ Consultations",
-    stack: ["React Native", "WebRTC", "Node.js", "AWS"],
-    description:
-      "HIPAA-compliant video consultation platform with EMR integration and prescription management.",
-    link: "https://healthconnect.example.com",
-  },
-  {
-    id: 8,
-    title: "Smart Home IoT App",
-    category: "Mobile Apps",
-    client: "HomeAI",
-    image:
-      "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=800&q=80",
-    stats: "500K+ Devices",
-    stack: ["Swift", "Kotlin", "MQTT", "AWS IoT"],
-    description:
-      "Unified control system for smart home devices with AI-powered automation and energy optimization.",
-    link: "https://homeai.example.com",
-  },
-  {
-    id: 9,
-    title: "Crypto Trading Bot",
-    category: "Blockchain",
-    client: "TradeAI",
-    image:
-      "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=800&q=80",
-    stats: "85% Win Rate",
-    stack: ["Python", "Binance API", "ML", "Docker"],
-    description:
-      "Algorithmic trading bot with machine learning-based market prediction and risk management.",
-    link: "https://tradeai.example.com",
-  },
-  {
-    id: 10,
-    title: "Learning Management System",
-    category: "Enterprise",
-    client: "EduTech Pro",
-    image:
-      "https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=800&q=80",
-    stats: "100K+ Students",
-    stack: ["Laravel", "Vue.js", "MySQL", "AWS"],
-    description:
-      "Comprehensive LMS with live classes, assessments, progress tracking, and certification management.",
-    link: "https://edutech.example.com",
-  },
-  {
-    id: 11,
-    title: "Ride Sharing Platform",
-    category: "On-Demand",
-    client: "RideNow",
-    image:
-      "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=800&q=80",
-    stats: "2M+ Rides",
-    stack: ["React Native", "Node.js", "MongoDB", "Socket.io"],
-    description:
-      "Real-time ride-hailing platform with dynamic pricing, driver matching, and in-app navigation.",
-    link: "https://ridenow.example.com",
-  },
-  {
-    id: 12,
-    title: "Social Media Analytics",
-    category: "AI/ML",
-    client: "SocialInsights",
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-    stats: "1B+ Posts Analyzed",
-    stack: ["Python", "NLP", "React", "BigQuery"],
-    description:
-      "AI-powered social media monitoring and sentiment analysis tool for brand management.",
-    link: "https://socialinsights.example.com",
-  },
-  {
-    id: 13,
-    title: "Real Estate Portal",
-    category: "Web Apps",
-    client: "PropertyHub",
-    image:
-      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80",
-    stats: "50K+ Listings",
-    stack: ["Next.js", "Prisma", "PostgreSQL", "Mapbox"],
-    description:
-      "Modern real estate platform with 3D virtual tours, mortgage calculator, and AI-based property recommendations.",
-    link: "https://propertyhub.example.com",
-  },
-  {
-    id: 14,
-    title: "Fitness Tracking App",
-    category: "Mobile Apps",
-    client: "FitLife",
-    image:
-      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800&q=80",
-    stats: "300K+ Users",
-    stack: ["Flutter", "Firebase", "HealthKit", "Google Fit"],
-    description:
-      "Comprehensive fitness app with workout plans, nutrition tracking, and AI personal trainer.",
-    link: "https://fitlife.example.com",
-  },
-  {
-    id: 15,
-    title: "Supply Chain Management",
-    category: "Enterprise",
-    client: "LogiFlow",
-    image:
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80",
-    stats: "30% Cost Reduction",
-    stack: ["Java", "Microservices", "Kafka", "Kubernetes"],
-    description:
-      "End-to-end supply chain visibility platform with predictive analytics and automated procurement.",
-    link: "https://logiflow.example.com",
-  },
-];
-const categories = [
-  "All",
-  "Mobile Apps",
-  "Web Apps",
-  "Enterprise",
-  "Blockchain",
-  "AI/ML",
-  "On-Demand",
-];
+import { categories, projects } from "../constants/common";
+
 export function PortfolioPage() {
   const [filter, setFilter] = useState("All");
   const filtered =
@@ -228,11 +24,10 @@ export function PortfolioPage() {
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-6 py-2 rounded-full border transition-all ${
-                filter === cat
-                  ? "bg-white text-black border-white"
-                  : "bg-transparent text-gray-400 border-white/20 hover:border-white"
-              }`}
+              className={`px-6 py-2 rounded-full border transition-all ${filter === cat
+                ? "bg-white text-black border-white"
+                : "bg-transparent text-gray-400 border-white/20 hover:border-white"
+                }`}
             >
               {cat}
             </button>
@@ -260,9 +55,8 @@ export function PortfolioPage() {
               <div className="bg-[#111111] p-4 sm:p-6 rounded-2xl border border-white/10 relative">
                 {/* Image */}
                 <div
-                  className={`w-full aspect-video sm:aspect-[16/9] md:aspect-video rounded-2xl overflow-hidden relative mb-6 md:mb-0 ${
-                    index % 2 === 1 ? "md:order-2" : ""
-                  }`}
+                  className={`w-full aspect-video sm:aspect-[16/9] md:aspect-video rounded-2xl overflow-hidden relative mb-6 md:mb-0 ${index % 2 === 1 ? "md:order-2" : ""
+                    }`}
                 >
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10" />
                   <img

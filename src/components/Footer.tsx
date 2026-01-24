@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Linkedin,
-  MessageCircle,
-  Mail,
   ArrowRight,
   ChevronDown,
-  Facebook,
   CheckCircle,
   X,
   AlertCircle,
@@ -15,7 +11,7 @@ import { Button } from "./ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Footer() {
-  const location = useLocation(); // পেজ চেঞ্জ ডিটেক্ট করার জন্য
+  const location = useLocation();
   const [worksDropdownOpen, setWorksDropdownOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -26,7 +22,6 @@ export function Footer() {
   const GAS_DEPLOYMENT_URL =
     "https://script.google.com/macros/s/AKfycbzYH-TfT_uR-2uxR8G2my7KElsR_x0f9GekGO35oSqq-qXkjI8k1zPSRvbIrATJDCg/exec";
 
-  // পেজ পরিবর্তন হলে ফর্ম এবং এরর রিসেট হবে
   useEffect(() => {
     setEmail("");
     setError("");
@@ -60,25 +55,21 @@ export function Footer() {
         }),
       });
 
-      // টেক্সট রেসপন্স চেক করা হচ্ছে
       const text = await response.text();
 
-      // যদি মেইল ডুপ্লিকেট হয়
       if (
         text.includes("already_subscribed") ||
         text.toLowerCase().includes("already")
       ) {
         setError("This email is already subscribed. Please try another one.");
-        setSubmitting(false); // বাটন আবার এনাবল করে দিলাম যাতে অন্য মেইল দিতে পারে
+        setSubmitting(false);
         return;
       }
 
-      // সাকসেস হলে
       setModalType("success");
       setSubmitted(true);
       setEmail("");
     } catch (err) {
-      // টেকনিক্যাল এরর ইগনোর করে সাকসেস দেখানো হচ্ছে (সেফটি)
       setModalType("success");
       setSubmitted(true);
       setEmail("");
@@ -166,9 +157,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Middle Section: Links & Info */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-24">
-          {/* Column 1: Navigation (4 cols) */}
           <div className="md:col-span-4 space-y-8">
             <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest">
               Explore

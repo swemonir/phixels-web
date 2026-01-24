@@ -1,68 +1,17 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Smartphone, Globe, Code, Brain, Blocks, Building2, Zap, ArrowRight } from 'lucide-react';
-const services = [{
-  id: 'mobile',
-  icon: Smartphone,
-  title: 'Mobile App Development',
-  desc: 'Native and cross-platform mobile applications built with Swift, Kotlin, Flutter, and React Native.',
-  color: 'text-blue-400',
-  gradient: 'from-blue-500/20 to-blue-500/0'
-}, {
-  id: 'web',
-  icon: Globe,
-  title: 'Website Development',
-  desc: 'Modern web applications with cutting-edge frameworks like React, Next.js, Laravel, and WordPress.',
-  color: 'text-cyan-400',
-  gradient: 'from-cyan-500/20 to-cyan-500/0'
-}, {
-  id: 'software',
-  icon: Code,
-  title: 'Software Development',
-  desc: 'Enterprise-grade software solutions including SaaS, ERP, LMS, and custom desktop applications.',
-  color: 'text-green-400',
-  gradient: 'from-green-500/20 to-green-500/0'
-}, {
-  id: 'ai',
-  icon: Brain,
-  title: 'Artificial Intelligence',
-  desc: 'AI/ML solutions with chatbots, computer vision, NLP, and predictive analytics for various industries.',
-  color: 'text-purple-400',
-  gradient: 'from-purple-500/20 to-purple-500/0'
-}, {
-  id: 'blockchain',
-  icon: Blocks,
-  title: 'Blockchain Development',
-  desc: 'Decentralized applications, smart contracts, NFT marketplaces, and cryptocurrency solutions.',
-  color: 'text-orange-400',
-  gradient: 'from-orange-500/20 to-orange-500/0'
-}, {
-  id: 'enterprise',
-  icon: Building2,
-  title: 'Enterprise Solution',
-  desc: 'Cloud consulting, Salesforce, SAP, Microsoft Azure, game development, and digital marketing services.',
-  color: 'text-red-400',
-  gradient: 'from-red-500/20 to-red-500/0'
-}, {
-  id: 'ondemand',
-  icon: Zap,
-  title: 'On-Demand Solutions',
-  desc: 'Custom on-demand platforms for delivery, booking, streaming, and marketplace applications.',
-  color: 'text-yellow-400',
-  gradient: 'from-yellow-500/20 to-yellow-500/0'
-}];
+import { ArrowRight } from 'lucide-react';
+import { Services } from '../constants/common';
 export function ServicesGrid() {
   return <section className="py-24 bg-[#050505] relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-64 w-96 h-96 bg-[color:var(--deep-navy)] rounded-full mix-blend-screen filter blur-[100px] opacity-20" />
-        <div className="absolute bottom-1/4 -right-64 w-96 h-96 bg-[color:var(--deep-red)] rounded-full mix-blend-screen filter blur-[100px] opacity-10" />
-      </div>
+    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      <div className="absolute top-1/4 -left-64 w-96 h-96 bg-[color:var(--deep-navy)] rounded-full mix-blend-screen filter blur-[100px] opacity-20" />
+      <div className="absolute bottom-1/4 -right-64 w-96 h-96 bg-[color:var(--deep-red)] rounded-full mix-blend-screen filter blur-[100px] opacity-10" />
+    </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <motion.div initial={{
+    <div className="container mx-auto px-4 relative z-10">
+      <div className="text-center mb-16">
+        <motion.div initial={{
           opacity: 0,
           y: 20
         }} whileInView={{
@@ -71,9 +20,9 @@ export function ServicesGrid() {
         }} viewport={{
           once: true
         }} className="inline-block mb-4 px-4 py-1 rounded-full bg-white/5 border border-white/10 text-sm text-[color:var(--neon-yellow)]">
-            End-to-End Solutions
-          </motion.div>
-          <motion.h2 initial={{
+          End-to-End Solutions
+        </motion.div>
+        <motion.h2 initial={{
           opacity: 0,
           y: 20
         }} whileInView={{
@@ -84,9 +33,9 @@ export function ServicesGrid() {
         }} transition={{
           delay: 0.1
         }} className="text-4xl md:text-5xl font-bold mb-4">
-            Our Expertise
-          </motion.h2>
-          <motion.p initial={{
+          Our Expertise
+        </motion.h2>
+        <motion.p initial={{
           opacity: 0,
           y: 20
         }} whileInView={{
@@ -97,13 +46,13 @@ export function ServicesGrid() {
         }} transition={{
           delay: 0.2
         }} className="text-gray-400 max-w-2xl mx-auto">
-            We deliver end-to-end digital solutions across the entire technology
-            stack, tailored to your business goals.
-          </motion.p>
-        </div>
+          We deliver end-to-end digital solutions across the entire technology
+          stack, tailored to your business goals.
+        </motion.p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {services.map((service, index) => <motion.div key={index} initial={{
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {Services.map((service, index) => <motion.div key={index} initial={{
           opacity: 0,
           y: 20
         }} whileInView={{
@@ -114,28 +63,28 @@ export function ServicesGrid() {
         }} viewport={{
           once: true
         }}>
-              <Link to={`/services/${service.id}`} className="group relative block h-full p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-[color:var(--neon-yellow)] transition-all duration-500 overflow-hidden hover:-translate-y-2">
-                {/* Hover Gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+          <Link to={`/services/${service.id}`} className="group relative block h-full p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-[color:var(--neon-yellow)] transition-all duration-500 overflow-hidden hover:-translate-y-2">
+            {/* Hover Gradient */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
 
-                {/* Icon */}
-                <div className={`relative w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center mb-6 ${service.color} group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
-                  <service.icon size={32} />
-                </div>
+            {/* Icon */}
+            <div className={`relative w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center mb-6 ${service.color} group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+              <service.icon size={32} />
+            </div>
 
-                {/* Content */}
-                <div className="relative z-10">
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[color:var(--neon-yellow)] transition-colors flex items-center justify-between">
-                    {service.title}
-                    <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                  </h3>
-                  <p className="text-gray-400 leading-relaxed text-sm group-hover:text-gray-300 transition-colors">
-                    {service.desc}
-                  </p>
-                </div>
-              </Link>
-            </motion.div>)}
-        </div>
+            {/* Content */}
+            <div className="relative z-10">
+              <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[color:var(--neon-yellow)] transition-colors flex items-center justify-between">
+                {service.title}
+                <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+              </h3>
+              <p className="text-gray-400 leading-relaxed text-sm group-hover:text-gray-300 transition-colors">
+                {service.desc}
+              </p>
+            </div>
+          </Link>
+        </motion.div>)}
       </div>
-    </section>;
+    </div>
+  </section>;
 }

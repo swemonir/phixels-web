@@ -1,106 +1,10 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { MapPin, Clock, DollarSign, CheckCircle, ArrowLeft, Upload, X } from 'lucide-react';
+import { MapPin, Clock, DollarSign, CheckCircle, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-
-// Job data structure
-const jobsData = {
-  1: {
-    title: 'Senior React Native Engineer',
-    type: 'Engineering',
-    location: 'Remote / Dhaka',
-    salary: '$80k - $120k',
-    description: 'We are looking for a Senior React Native Engineer to join our mobile development team. You will be responsible for building high-performance, scalable mobile applications that serve millions of users worldwide.',
-    requirements: [
-      '5+ years of React Native development experience',
-      'Strong knowledge of JavaScript/TypeScript',
-      'Experience with state management (Redux, Context API)',
-      'Familiarity with native iOS/Android development',
-      'Experience with RESTful APIs and GraphQL',
-      'Knowledge of CI/CD pipelines and automated testing'
-    ],
-    benefits: [
-      'Competitive salary + equity',
-      'Remote work flexibility',
-      'Learning & development budget',
-      'Health insurance coverage',
-      'Flexible working hours',
-      'Latest MacBook Pro + equipment'
-    ]
-  },
-  2: {
-    title: 'Backend Architect (Node.js/Go)',
-    type: 'Engineering',
-    location: 'Remote / Global',
-    salary: '$90k - $140k',
-    description: 'Join our backend team as a Backend Architect specializing in Node.js and Go. You will design and implement scalable, secure, and high-performance backend systems that power our mobile and web applications.',
-    requirements: [
-      '7+ years of backend development experience',
-      'Expert knowledge of Node.js and Go',
-      'Experience with microservices architecture',
-      'Strong understanding of databases (PostgreSQL, MongoDB, Redis)',
-      'Knowledge of cloud platforms (AWS, GCP, Azure)',
-      'Experience with Docker and Kubernetes',
-      'Familiarity with message queues and event-driven architecture'
-    ],
-    benefits: [
-      'Competitive salary + equity',
-      'Remote work flexibility',
-      'Learning & development budget',
-      'Health insurance coverage',
-      'Flexible working hours',
-      'Latest development equipment'
-    ]
-  },
-  3: {
-    title: 'Senior UI/UX Designer',
-    type: 'Design',
-    location: 'Hybrid / Dhaka',
-    salary: '$60k - $90k',
-    description: 'We are seeking a Senior UI/UX Designer to create exceptional user experiences for our mobile and web applications. You will work closely with our development team to design intuitive, beautiful, and user-friendly interfaces.',
-    requirements: [
-      '4+ years of UI/UX design experience',
-      'Proficiency in Figma, Sketch, or Adobe Creative Suite',
-      'Strong portfolio demonstrating mobile and web design skills',
-      'Experience with user research and usability testing',
-      'Knowledge of design systems and component libraries',
-      'Understanding of mobile-first and responsive design principles'
-    ],
-    benefits: [
-      'Competitive salary + equity',
-      'Hybrid work model',
-      'Design tools and software budget',
-      'Health insurance coverage',
-      'Flexible working hours',
-      'Creative work environment'
-    ]
-  },
-  4: {
-    title: 'Technical Project Manager',
-    type: 'Product',
-    location: 'Remote / Global',
-    salary: '$70k - $100k',
-    description: 'As a Technical Project Manager, you will oversee the planning, execution, and delivery of complex software projects. You will bridge the gap between technical teams and stakeholders, ensuring projects are delivered on time and meet quality standards.',
-    requirements: [
-      '5+ years of project management experience in tech',
-      'Experience managing software development projects',
-      'Strong understanding of Agile/Scrum methodologies',
-      'Excellent communication and leadership skills',
-      'Knowledge of project management tools (Jira, Asana, etc.)',
-      'Technical background or understanding of software development'
-    ],
-    benefits: [
-      'Competitive salary + equity',
-      'Remote work flexibility',
-      'Professional development opportunities',
-      'Health insurance coverage',
-      'Flexible working hours',
-      'Leadership growth opportunities'
-    ]
-  }
-};
+import { jobsData } from '../constants/common';
 
 export function JobDetailPage() {
   const { id } = useParams();
@@ -108,7 +12,7 @@ export function JobDetailPage() {
   const jobData = jobsData[jobId as keyof typeof jobsData] || jobsData[1];
 
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false); // বাটন টেক্সট কন্ট্রোল করার জন্য নতুন স্টেট
+  const [submitted, setSubmitted] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [modalType, setModalType] = useState<'success' | 'error' | null>(null);
 
@@ -122,7 +26,7 @@ export function JobDetailPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting || submitted) return; // ইতিমধ্যে সাবমিট হয়ে থাকলে বা লোড হতে থাকলে রিটার্ন করবে
+    if (submitting || submitted) return;
 
     setSubmitting(true);
     const form = e.target as HTMLFormElement;
@@ -263,11 +167,11 @@ export function JobDetailPage() {
                     </label>
                   </div>
 
-                  <Button 
-                    type="submit" 
-                    className={`w-full mt-4 ${(submitting || submitted) ? 'opacity-50 cursor-not-allowed' : ''}`} 
-                    variant="primary" 
-                    glow 
+                  <Button
+                    type="submit"
+                    className={`w-full mt-4 ${(submitting || submitted) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    variant="primary"
+                    glow
                     disabled={submitting || submitted}
                   >
                     {submitted ? 'Submitted' : submitting ? 'Sending...' : 'Submit Application'}

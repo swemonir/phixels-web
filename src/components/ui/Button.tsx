@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import { usePopup } from '../../context/PopupContext';
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+
+interface ButtonProps extends Omit<HTMLMotionProps<"button">, 'ref' | 'children'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   glow?: boolean;
   triggerPopup?: boolean;
+  children?: React.ReactNode;
 }
 export function Button({
   children,
@@ -31,7 +33,7 @@ export function Button({
       width,
       height
     } = ref.current.getBoundingClientRect();
-    const x = (e.clientX - (left + width / 2)) * 0.2; // Magnetic strength
+    const x = (e.clientX - (left + width / 2)) * 0.2;
     const y = (e.clientY - (top + height / 2)) * 0.2;
     setPosition({
       x,
@@ -70,8 +72,8 @@ export function Button({
   }} whileTap={{
     scale: 0.95
   }} {...props}>
-      {/* Glow effect overlay */}
-      {glow && <div className="absolute inset-0 rounded-lg bg-white opacity-0 hover:opacity-10 transition-opacity duration-300" />}
-      <span className="relative z-10 flex items-center gap-2">{children}</span>
-    </motion.button>;
+    {/* Glow effect overlay */}
+    {glow && <div className="absolute inset-0 rounded-lg bg-white opacity-0 hover:opacity-10 transition-opacity duration-300" />}
+    <span className="relative z-10 flex items-center gap-2">{children}</span>
+  </motion.button>;
 }

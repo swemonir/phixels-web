@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useInView } from 'framer-motion';
 interface CountUpStatsProps {
   end: number;
@@ -38,8 +38,8 @@ export function CountUpStats({
     return () => cancelAnimationFrame(animationFrame);
   }, [end, duration, isInView]);
   return <span ref={ref} className={className}>
-      {prefix}
-      {count.toLocaleString()}
-      {suffix}
-    </span>;
+    {prefix}
+    {count.toLocaleString()}
+    {suffix}
+  </span>;
 }

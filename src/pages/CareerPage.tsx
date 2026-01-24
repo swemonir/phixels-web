@@ -1,13 +1,12 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, Globe, BookOpen, Laptop, ArrowRight, Briefcase } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 export function CareerPage() {
   return <main className="pt-44 pb-20 bg-[#050505] min-h-screen">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-20">
-          <motion.div initial={{
+    <div className="container mx-auto px-4">
+      <div className="text-center mb-20">
+        <motion.div initial={{
           opacity: 0,
           scale: 0.9
         }} animate={{
@@ -16,21 +15,21 @@ export function CareerPage() {
         }} transition={{
           duration: 0.5
         }} className="inline-block mb-6 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-[color:var(--vibrant-green)] font-mono">
-            We are hiring!
-          </motion.div>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-            Join the Top 1% <br />
-            <span className="text-gradient">Engineering Team</span>
-          </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            We don't just hire employees. We hire future CTOs, founders, and
-            visionaries. Build the future with us.
-          </p>
-        </div>
+          We are hiring!
+        </motion.div>
+        <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
+          Join the Top 1% <br />
+          <span className="text-gradient">Engineering Team</span>
+        </h1>
+        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          We don't just hire employees. We hire future CTOs, founders, and
+          visionaries. Build the future with us.
+        </p>
+      </div>
 
-        {/* Perks */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
-          {[{
+      {/* Perks */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+        {[{
           icon: Globe,
           title: 'Remote First',
           desc: 'Work from anywhere in the world. We focus on output, not hours.',
@@ -56,25 +55,25 @@ export function CareerPage() {
         }} viewport={{
           once: true
         }} className="p-8 bg-white/5 rounded-2xl border border-white/10 hover:border-[color:var(--bright-red)] transition-all duration-300 group hover:-translate-y-2">
-              <div className={`w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center mb-6 ${perk.color} group-hover:scale-110 transition-transform`}>
-                <perk.icon size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">
-                {perk.title}
-              </h3>
-              <p className="text-gray-400 leading-relaxed">{perk.desc}</p>
-            </motion.div>)}
+          <div className={`w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center mb-6 ${perk.color} group-hover:scale-110 transition-transform`}>
+            <perk.icon size={24} />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">
+            {perk.title}
+          </h3>
+          <p className="text-gray-400 leading-relaxed">{perk.desc}</p>
+        </motion.div>)}
+      </div>
+
+      {/* Open Roles */}
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold">Open Positions</h2>
+          <div className="text-sm text-gray-400">4 roles available</div>
         </div>
 
-        {/* Open Roles */}
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold">Open Positions</h2>
-            <div className="text-sm text-gray-400">4 roles available</div>
-          </div>
-
-          <div className="space-y-4">
-            {[{
+        <div className="space-y-4">
+          {[{
             title: 'Senior React Native Engineer',
             type: 'Engineering',
             loc: 'Remote'
@@ -101,31 +100,31 @@ export function CareerPage() {
           }} viewport={{
             once: true
           }}>
-                <Link to={`/career/${i + 1}`} className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-white/5 rounded-xl border border-white/10 hover:border-[color:var(--bright-red)] hover:bg-white/[0.07] transition-all group">
-                  <div className="mb-4 md:mb-0">
-                    <h3 className="text-xl font-bold text-white group-hover:text-[color:var(--bright-red)] transition-colors flex items-center gap-2">
-                      {role.title}
-                    </h3>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
-                      <span className="flex items-center gap-1">
-                        <Briefcase size={14} /> {role.type}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Globe size={14} /> {role.loc}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Check size={14} /> Full Time
-                      </span>
-                    </div>
-                  </div>
-                  <Button variant="outline" className="group-hover:bg-[color:var(--bright-red)] group-hover:text-white group-hover:border-[color:var(--bright-red)] transition-all">
-                    Apply Now{' '}
-                    <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </motion.div>)}
-          </div>
+            <Link to={`/career/${i + 1}`} className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-white/5 rounded-xl border border-white/10 hover:border-[color:var(--bright-red)] hover:bg-white/[0.07] transition-all group">
+              <div className="mb-4 md:mb-0">
+                <h3 className="text-xl font-bold text-white group-hover:text-[color:var(--bright-red)] transition-colors flex items-center gap-2">
+                  {role.title}
+                </h3>
+                <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
+                  <span className="flex items-center gap-1">
+                    <Briefcase size={14} /> {role.type}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Globe size={14} /> {role.loc}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Check size={14} /> Full Time
+                  </span>
+                </div>
+              </div>
+              <Button variant="outline" className="group-hover:bg-[color:var(--bright-red)] group-hover:text-white group-hover:border-[color:var(--bright-red)] transition-all">
+                Apply Now{' '}
+                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </motion.div>)}
         </div>
       </div>
-    </main>;
+    </div>
+  </main>;
 }
