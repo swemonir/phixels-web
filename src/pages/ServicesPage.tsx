@@ -150,13 +150,22 @@ export function ServicesPage() {
                       Specialized Services
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {service.features.map((sub, idx) => <Link key={idx} to={`/services/${service._id}`} className="group/sub flex items-center gap-3 p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[color:var(--neon-yellow)] transition-all">
-                        <div className="w-2 h-2 rounded-full bg-[color:var(--bright-red)] group-hover/sub:bg-[color:var(--neon-yellow)] transition-colors" />
-                        <span className="text-gray-300 group-hover/sub:text-white transition-colors flex-1">
-                          {sub}
-                        </span>
-                        <ArrowRight size={16} className="text-gray-500 opacity-0 group-hover/sub:opacity-100 transition-opacity" />
-                      </Link>)}
+                      {service.features.map((sub, idx) => {
+                        const subSlug = sub.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and');
+                        return (
+                          <Link
+                            key={idx}
+                            to={`/services/${service._id}/${subSlug}`}
+                            className="group/sub flex items-center gap-3 p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[color:var(--neon-yellow)] transition-all"
+                          >
+                            <div className="w-2 h-2 rounded-full bg-[color:var(--bright-red)] group-hover/sub:bg-[color:var(--neon-yellow)] transition-colors" />
+                            <span className="text-gray-300 group-hover/sub:text-white transition-colors flex-1">
+                              {sub}
+                            </span>
+                            <ArrowRight size={16} className="text-gray-500 opacity-0 group-hover/sub:opacity-100 transition-opacity" />
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </motion.div>

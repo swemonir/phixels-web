@@ -1,25 +1,75 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { CountUpStats } from '../components/CountUpStats';
 import { ProfessionalReviewCarousel } from '../components/ProfessionalReviewCarousel';
-import { servicesData } from '../constants/common';
-import { ArrowRight, CheckCircle, Layers } from 'lucide-react';
+import { ArrowRight, CheckCircle, Layers, Loader2, Code, Smartphone, Globe, Cpu, Palette, BarChart, Shield, Cloud } from 'lucide-react';
+import { apiService } from '../services/api';
+import { Service } from '../types/api';
+
+const iconMap: Record<string, any> = {
+  'code': Code,
+  'smartphone': Smartphone,
+  'globe': Globe,
+  'cpu': Cpu,
+  'palette': Palette,
+  'bar-chart': BarChart,
+  'shield': Shield,
+  'cloud': Cloud,
+};
+
 export function ServiceCategoryPage() {
-  const {
-    category
-  } = useParams();
-  const service = servicesData.find(s => s.id === category);
-  if (!service) {
-    return <div className="min-h-screen bg-[#050505] flex items-center justify-center text-white">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Service Not Found</h1>
-        <Link to="/services" className="text-[color:var(--bright-red)] hover:underline">
-          Back to Services
-        </Link>
+  const { category } = useParams<{ category: string }>();
+  const [service, setService] = useState<Service | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchService = async () => {
+      if (!category) return;
+      try {
+        setLoading(true);
+        const response = await apiService.getServiceById(category);
+        if (response.success) {
+          setService(response.data);
+        } else {
+          setError(response.message || 'Service not found');
+        }
+      } catch (err: any) {
+        setError(err.message || 'An error occurred while fetching service details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchService();
+  }, [category]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center text-white">
+        <Loader2 className="w-12 h-12 text-[color:var(--bright-red)] animate-spin" />
       </div>
-    </div>;
+    );
   }
+
+  if (error || !service) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center text-white">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4 text-red-500">Service Not Found</h1>
+          <p className="text-gray-400 mb-8">{error}</p>
+          <Link to="/services" className="text-[color:var(--bright-red)] hover:underline">
+            Back to Services
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const Icon = iconMap[service.icon.toLowerCase()] || Code;
+
   return <main className="bg-[#050505] min-h-screen pt-40 pb-20">
     {/* Hero Section */}
     <section className="container mx-auto px-4 mb-24">
@@ -32,8 +82,8 @@ export function ServiceCategoryPage() {
             opacity: 1,
             y: 0
           }} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-sm text-[color:var(--bright-red)] font-bold mb-6">
-            <service.icon size={16} />
-            {service.name}
+            <Icon size={16} />
+            {service.title}
           </motion.div>
 
           <motion.h1 initial={{
@@ -45,7 +95,7 @@ export function ServiceCategoryPage() {
           }} transition={{
             delay: 0.1
           }} className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            {service.name} <br />
+            {service.title} <br />
             <span className="text-gradient">Solutions</span>
           </motion.h1>
 
@@ -58,7 +108,7 @@ export function ServiceCategoryPage() {
           }} transition={{
             delay: 0.2
           }} className="text-xl text-gray-400 max-w-2xl mb-8 leading-relaxed">
-            {service.longDesc}
+            {service.description}
           </motion.p>
 
           <motion.div initial={{
@@ -87,7 +137,7 @@ export function ServiceCategoryPage() {
             delay: 0.2
           }} className="aspect-square rounded-3xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 flex items-center justify-center relative overflow-hidden group">
             <div className="absolute inset-0 bg-[color:var(--bright-red)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <service.icon size={120} className="text-white/20 group-hover:text-[color:var(--bright-red)] group-hover:scale-110 transition-all duration-500" />
+            <Icon size={120} className="text-white/20 group-hover:text-[color:var(--bright-red)] group-hover:scale-110 transition-all duration-500" />
           </motion.div>
         </div>
       </div>
@@ -100,36 +150,41 @@ export function ServiceCategoryPage() {
           Specialized Services
         </h2>
         <p className="text-gray-400">
-          Explore our specific capabilities within {service.name}
+          Explore our specific capabilities within {service.title}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {service.subcategories.map((sub, index) => <motion.div key={index} initial={{
-          opacity: 0,
-          y: 20
-        }} whileInView={{
-          opacity: 1,
-          y: 0
-        }} viewport={{
-          once: true
-        }} transition={{
-          delay: index * 0.05
-        }}>
-          <Link to={`/services/${service.id}/${sub.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and')}`} className="group block p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-[color:var(--neon-yellow)] transition-all duration-300 h-full hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-xl bg-[color:var(--deep-navy)] flex items-center justify-center mb-6 text-white group-hover:scale-110 transition-transform">
-              <Layers size={24} />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[color:var(--neon-yellow)] transition-colors flex items-center justify-between">
-              {sub}
-              <ArrowRight size={18} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-            </h3>
-            <p className="text-sm text-gray-400">
-              Professional {sub} services tailored to your specific business
-              requirements and goals.
-            </p>
-          </Link>
-        </motion.div>)}
+        {service.features.map((sub, index) => {
+          const subSlug = sub.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and');
+          return (
+            <motion.div key={index} initial={{
+              opacity: 0,
+              y: 20
+            }} whileInView={{
+              opacity: 1,
+              y: 0
+            }} viewport={{
+              once: true
+            }} transition={{
+              delay: index * 0.05
+            }}>
+              <Link to={`/services/${service._id}/${subSlug}`} className="group block p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-[color:var(--neon-yellow)] transition-all duration-300 h-full hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-xl bg-[color:var(--deep-navy)] flex items-center justify-center mb-6 text-white group-hover:scale-110 transition-transform">
+                  <Layers size={24} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[color:var(--neon-yellow)] transition-colors flex items-center justify-between">
+                  {sub}
+                  <ArrowRight size={18} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Professional {sub} services tailored to your specific business
+                  requirements and goals.
+                </p>
+              </Link>
+            </motion.div>
+          );
+        })}
       </div>
     </section>
 
@@ -139,7 +194,7 @@ export function ServiceCategoryPage() {
         <div className="flex flex-col md:flex-row gap-16 items-center">
           <div className="w-full md:w-1/2">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Why Choose Phixels for <br /> {service.name}?
+              Why Choose Phixels for <br /> {service.title}?
             </h2>
             <div className="space-y-6">
               {['Industry-leading expertise and proven track record', 'Agile methodology ensuring timely delivery', 'Scalable and secure architecture design', 'Post-launch support and maintenance', 'Transparent communication and reporting'].map((item, i) => <div key={i} className="flex items-start gap-4">
@@ -185,7 +240,7 @@ export function ServiceCategoryPage() {
     <section className="container mx-auto px-4 text-center">
       <div className="max-w-4xl mx-auto bg-gradient-to-b from-white/10 to-black rounded-3xl p-12 border border-white/10">
         <h2 className="text-4xl font-bold text-white mb-6">
-          Ready to start your {service.name} project?
+          Ready to start your {service.title} project?
         </h2>
         <p className="text-xl text-gray-400 mb-8">
           Let's discuss your requirements and build something extraordinary

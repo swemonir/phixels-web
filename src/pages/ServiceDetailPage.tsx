@@ -1,17 +1,69 @@
-import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
-import { Zap, Layers, Cpu, ArrowRight } from 'lucide-react';
+import { Zap, Layers, Cpu, ArrowRight, Loader2 } from 'lucide-react';
 import { TechStack } from '../components/TechStack';
 import { ProfessionalReviewCarousel } from '../components/ProfessionalReviewCarousel';
+import { apiService } from '../services/api';
+import { Service } from '../types/api';
+
 export function ServiceDetailPage() {
-  const {
-    category,
-    subcategory
-  } = useParams();
-  // Format titles for display
-  const title = subcategory?.replace(/-/g, ' ').replace(/and/g, '&') || 'Service Details';
-  const categoryTitle = category?.replace(/-/g, ' ') || 'Services';
+  const { category, subcategory } = useParams<{ category: string; subcategory: string }>();
+  const [service, setService] = useState<Service | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchService = async () => {
+      if (!category) return;
+      try {
+        setLoading(true);
+        const response = await apiService.getServiceById(category);
+        if (response.success) {
+          setService(response.data);
+        } else {
+          setError(response.message || 'Service not found');
+        }
+      } catch (err: any) {
+        setError(err.message || 'An error occurred while fetching service details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchService();
+  }, [category]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center text-white">
+        <Loader2 className="w-12 h-12 text-[color:var(--bright-red)] animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !service) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center text-white">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4 text-red-500">Service Not Found</h1>
+          <Link to="/services" className="text-[color:var(--bright-red)] hover:underline">
+            Back to Services
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Find the exact subcategory name from the features array using the slug
+  const matchedSubcategory = service.features.find(
+    f => f.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and') === subcategory
+  ) || subcategory?.replace(/-/g, ' ').replace(/and/g, '&');
+
+  const title = matchedSubcategory || 'Service Details';
+  const categoryTitle = service.title;
+
   return <main className="bg-[#050505] min-h-screen pt-40 pb-20">
     {/* Hero Section */}
     <section className="container mx-auto px-4 mb-20">
@@ -23,7 +75,7 @@ export function ServiceDetailPage() {
         y: 0
       }} className="max-w-4xl">
         <div className="text-[color:var(--bright-red)] text-sm font-bold uppercase tracking-widest mb-4">
-          {categoryTitle} / {title}
+          <Link to={`/services/${service._id}`} className="hover:underline">{categoryTitle}</Link> / {title}
         </div>
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 capitalize leading-tight">
           {title}
@@ -31,7 +83,7 @@ export function ServiceDetailPage() {
         <p className="text-xl text-gray-400 max-w-2xl mb-8">
           We deliver enterprise-grade {title} solutions tailored to your
           business needs. Scalable, secure, and built with cutting-edge
-          technology.
+          technology under our {categoryTitle} expertise.
         </p>
         <Button variant="primary" triggerPopup className="px-8 py-4 text-lg">
           Start Your Project
