@@ -1,14 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, ChevronRight } from 'lucide-react';
+import { ArrowRight, Sparkles, ChevronRight, Loader2, Code, Smartphone, Globe, Cpu, Palette, BarChart, Shield, Cloud } from 'lucide-react';
 import { CountUpStats } from '../components/CountUpStats';
 import { ProfessionalReviewCarousel } from '../components/ProfessionalReviewCarousel';
 import { PageHeader } from '../components/ui/PageHeader';
 import { CallToAction } from '../components/ui/CallToAction';
-import { servicesData2 } from '../constants/common';
+import { apiService } from '../services/api';
+import { Service } from '../types/api';
+
+const iconMap: Record<string, any> = {
+  'code': Code,
+  'smartphone': Smartphone,
+  'globe': Globe,
+  'cpu': Cpu,
+  'palette': Palette,
+  'bar-chart': BarChart,
+  'shield': Shield,
+  'cloud': Cloud,
+};
+
 export function ServicesPage() {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [expandedService, setExpandedService] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getServices();
+        if (response.success) {
+          setServices(response.data);
+        } else {
+          setError(response.message || 'Failed to fetch services');
+        }
+      } catch (err: any) {
+        setError(err.message || 'An error occurred while fetching services');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  const getServiceColor = (index: number) => {
+    const colors = [
+      'from-blue-600 to-indigo-600',
+      'from-emerald-600 to-teal-600',
+      'from-orange-600 to-red-600',
+      'from-purple-600 to-pink-600'
+    ];
+    return colors[index % colors.length];
+  };
+
   return <main className="bg-[#050505] min-h-screen pt-40 pb-20">
     {/* Hero Section */}
     <section className="container mx-auto px-4 mb-24">
@@ -22,84 +69,102 @@ export function ServicesPage() {
 
     {/* Services Grid */}
     <section className="container mx-auto px-4 mb-24">
-      <div className="space-y-8">
-        {servicesData2.map((service, index) => <motion.div key={service.id} initial={{
-          opacity: 0,
-          y: 30
-        }} whileInView={{
-          opacity: 1,
-          y: 0
-        }} viewport={{
-          once: true
-        }} transition={{
-          delay: index * 0.1
-        }} className="relative">
-          {/* Main Service Card */}
-          <div className="group relative rounded-3xl bg-white/5 border border-white/10 overflow-hidden hover:border-white/20 transition-all duration-300 cursor-pointer" onClick={() => setExpandedService(expandedService === service.id ? null : service.id)}>
-            <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <Loader2 className="w-12 h-12 text-[color:var(--bright-red)] animate-spin mb-4" />
+          <p className="text-gray-400">Loading our services...</p>
+        </div>
+      ) : error ? (
+        <div className="text-center py-20 text-red-500 bg-red-500/10 rounded-2xl border border-red-500/20">
+          {error}
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {services.map((service, index) => {
+            const Icon = iconMap[service.icon.toLowerCase()] || Code;
+            const color = getServiceColor(index);
 
-            <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
-              {/* Icon */}
-              <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                <service.icon className="w-12 h-12 text-white" />
-              </div>
+            return (
+              <motion.div key={service._id} initial={{
+                opacity: 0,
+                y: 30
+              }} whileInView={{
+                opacity: 1,
+                y: 0
+              }} viewport={{
+                once: true
+              }} transition={{
+                delay: index * 0.1
+              }} className="relative">
+                {/* Main Service Card */}
+                <div className="group relative rounded-3xl bg-white/5 border border-white/10 overflow-hidden hover:border-white/20 transition-all duration-300 cursor-pointer" onClick={() => setExpandedService(expandedService === service._id ? null : service._id)}>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
 
-              {/* Content */}
-              <div className="flex-1 text-center md:text-left">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 group-hover:text-[color:var(--bright-red)] transition-colors">
-                  {service.name}
-                </h2>
-                <p className="text-gray-400 text-lg mb-4">
-                  {service.description}
-                </p>
-                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                  <span className="text-sm text-gray-500">
-                    {service.subcategories.length} specialized services
-                  </span>
+                  <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+                    {/* Icon */}
+                    <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className="w-12 h-12 text-white" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 text-center md:text-left">
+                      <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 group-hover:text-[color:var(--bright-red)] transition-colors">
+                        {service.title}
+                      </h2>
+                      <p className="text-gray-400 text-lg mb-4">
+                        {service.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                        <span className="text-sm text-gray-500 font-medium">
+                          {service.features.length} specialized services
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Arrow */}
+                    <div className="flex items-center gap-4">
+                      <Link to={`/services/${service._id}`} onClick={e => e.stopPropagation()} className="px-6 py-3 rounded-lg bg-[color:var(--bright-red)] text-white font-bold hover:bg-[color:var(--bright-red)]/90 transition-colors flex items-center gap-2">
+                        View Details <ArrowRight size={18} />
+                      </Link>
+                      <motion.div animate={{
+                        rotate: expandedService === service._id ? 90 : 0
+                      }} transition={{
+                        duration: 0.3
+                      }}>
+                        <ChevronRight size={32} className="text-gray-400" />
+                      </motion.div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              {/* Arrow */}
-              <div className="flex items-center gap-4">
-                <Link to={`/services/${service.id}`} onClick={e => e.stopPropagation()} className="px-6 py-3 rounded-lg bg-[color:var(--bright-red)] text-white font-bold hover:bg-[color:var(--bright-red)]/90 transition-colors flex items-center gap-2">
-                  View Details <ArrowRight size={18} />
-                </Link>
-                <motion.div animate={{
-                  rotate: expandedService === service.id ? 90 : 0
+                <motion.div initial={{
+                  height: 0,
+                  opacity: 0
+                }} animate={{
+                  height: expandedService === service._id ? 'auto' : 0,
+                  opacity: expandedService === service._id ? 1 : 0
                 }} transition={{
                   duration: 0.3
-                }}>
-                  <ChevronRight size={32} className="text-gray-400" />
+                }} className="overflow-hidden">
+                  <div className="mt-4 p-8 rounded-2xl bg-white/5 border border-white/10">
+                    <h3 className="text-xl font-bold text-white mb-6">
+                      Specialized Services
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {service.features.map((sub, idx) => <Link key={idx} to={`/services/${service._id}`} className="group/sub flex items-center gap-3 p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[color:var(--neon-yellow)] transition-all">
+                        <div className="w-2 h-2 rounded-full bg-[color:var(--bright-red)] group-hover/sub:bg-[color:var(--neon-yellow)] transition-colors" />
+                        <span className="text-gray-300 group-hover/sub:text-white transition-colors flex-1">
+                          {sub}
+                        </span>
+                        <ArrowRight size={16} className="text-gray-500 opacity-0 group-hover/sub:opacity-100 transition-opacity" />
+                      </Link>)}
+                    </div>
+                  </div>
                 </motion.div>
-              </div>
-            </div>
-          </div>
-          <motion.div initial={{
-            height: 0,
-            opacity: 0
-          }} animate={{
-            height: expandedService === service.id ? 'auto' : 0,
-            opacity: expandedService === service.id ? 1 : 0
-          }} transition={{
-            duration: 0.3
-          }} className="overflow-hidden">
-            <div className="mt-4 p-8 rounded-2xl bg-white/5 border border-white/10">
-              <h3 className="text-xl font-bold text-white mb-6">
-                Specialized Services
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {service.subcategories.map((sub, idx) => <Link key={idx} to={`/services/${service.id}/${sub.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and')}`} className="group/sub flex items-center gap-3 p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[color:var(--neon-yellow)] transition-all">
-                  <div className="w-2 h-2 rounded-full bg-[color:var(--bright-red)] group-hover/sub:bg-[color:var(--neon-yellow)] transition-colors" />
-                  <span className="text-gray-300 group-hover/sub:text-white transition-colors flex-1">
-                    {sub}
-                  </span>
-                  <ArrowRight size={16} className="text-gray-500 opacity-0 group-hover/sub:opacity-100 transition-opacity" />
-                </Link>)}
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>)}
-      </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
     </section>
 
     {/* New Professional Review Section */}

@@ -1,22 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { MapPin, Clock, DollarSign, CheckCircle, ArrowLeft } from 'lucide-react';
+import { MapPin, Clock, DollarSign, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { jobsData } from '../constants/common';
+import { apiService } from '../services/api';
+import { Career } from '../types/api';
 
 export function JobDetailPage() {
-  const { id } = useParams();
-  const jobId = parseInt(id || '1');
-  const jobData = jobsData[jobId as keyof typeof jobsData] || jobsData[1];
-
+  const { id } = useParams<{ id: string }>();
+  const [jobData, setJobData] = useState<Career | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [modalType, setModalType] = useState<'success' | 'error' | null>(null);
 
   const GAS_DEPLOYMENT_URL = 'https://script.google.com/macros/s/AKfycbzYH-TfT_uR-2uxR8G2my7KElsR_x0f9GekGO35oSqq-qXkjI8k1zPSRvbIrATJDCg/exec';
+
+  useEffect(() => {
+    const fetchJob = async () => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        const response = await apiService.getCareerById(id);
+        if (response.success) {
+          setJobData(response.data);
+        } else {
+          setError(response.message || 'Failed to fetch job details');
+        }
+      } catch (err: any) {
+        setError(err.message || 'An error occurred while fetching job details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJob();
+  }, [id]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -26,7 +48,7 @@ export function JobDetailPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting || submitted) return;
+    if (submitting || submitted || !jobData) return;
 
     setSubmitting(true);
     const form = e.target as HTMLFormElement;
@@ -44,7 +66,7 @@ export function JobDetailPage() {
     }
 
     try {
-      const response = await fetch(GAS_DEPLOYMENT_URL, {
+      await fetch(GAS_DEPLOYMENT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
@@ -52,13 +74,12 @@ export function JobDetailPage() {
           name,
           email,
           portfolio,
-          jobTitle: jobData.title,
+          jobTitle: jobData.jobTitle,
           file: resumeBase64
         })
       });
 
-      // সাকসেস লজিক
-      setSubmitted(true); // বাটন এখন "Submitted" দেখাবে
+      setSubmitted(true);
       setModalType('success');
       confetti({
         particleCount: 150,
@@ -70,13 +91,35 @@ export function JobDetailPage() {
 
     } catch (err) {
       console.error('Submission error:', err);
-      // কোটা এরর হলেও আমরা সাকসেস এবং "Submitted" দেখাচ্ছি কোটা বাঁচাতে
       setSubmitted(true);
       setModalType('success');
     } finally {
-      setSubmitting(false); // লোডিং স্ট্যাটাস বন্ধ হবে
+      setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="bg-[#050505] min-h-screen pt-40 flex flex-col items-center justify-center">
+        <Loader2 className="w-12 h-12 text-[color:var(--bright-red)] animate-spin mb-4" />
+        <p className="text-gray-400">Loading job details...</p>
+      </div>
+    );
+  }
+
+  if (error || !jobData) {
+    return (
+      <div className="bg-[#050505] min-h-screen pt-40 px-4">
+        <div className="max-w-md mx-auto text-center py-12 px-8 rounded-2xl border border-red-500/20 bg-red-500/10">
+          <h2 className="text-2xl font-bold text-red-500 mb-4">Error</h2>
+          <p className="text-gray-400 mb-8">{error || 'Job not found'}</p>
+          <Link to="/career">
+            <Button variant="outline">Back to Careers</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -88,10 +131,10 @@ export function JobDetailPage() {
 
           <div className="mb-12 border-b border-white/10 pb-12">
             <div className="text-[color:var(--bright-red)] font-bold mb-4 uppercase tracking-widest text-sm">
-              {jobData.type} Team
+              {jobData.jobType} Team
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-              {jobData.title}
+              {jobData.jobTitle}
             </h1>
             <div className="flex flex-wrap gap-6 text-gray-400">
               <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
@@ -101,7 +144,7 @@ export function JobDetailPage() {
                 <Clock size={18} className="text-[color:var(--neon-yellow)]" /> Full Time
               </div>
               <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full">
-                <DollarSign size={18} className="text-[color:var(--vibrant-green)]" /> {jobData.salary} / year
+                <DollarSign size={18} className="text-[color:var(--vibrant-green)]" /> {jobData.salaryRange}
               </div>
             </div>
           </div>
@@ -110,32 +153,36 @@ export function JobDetailPage() {
             <div className="lg:col-span-2 space-y-12">
               <section>
                 <h2 className="text-2xl font-bold text-white mb-4">About the Role</h2>
-                <p className="text-gray-300 leading-relaxed text-lg">{jobData.description}</p>
+                <div className="text-gray-300 leading-relaxed text-lg whitespace-pre-line">{jobData.description}</div>
               </section>
 
-              <section>
-                <h2 className="text-2xl font-bold text-white mb-4">Requirements</h2>
-                <ul className="space-y-4">
-                  {jobData.requirements.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-gray-300">
-                      <CheckCircle size={20} className="text-[color:var(--bright-red)] shrink-0 mt-1" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
+              {jobData.requirements && jobData.requirements.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-white mb-4">Requirements</h2>
+                  <ul className="space-y-4">
+                    {jobData.requirements.map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 text-gray-300">
+                        <CheckCircle size={20} className="text-[color:var(--bright-red)] shrink-0 mt-1" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
 
-              <section>
-                <h2 className="text-2xl font-bold text-white mb-4">What We Offer</h2>
-                <ul className="space-y-4">
-                  {jobData.benefits.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-gray-300">
-                      <CheckCircle size={20} className="text-[color:var(--vibrant-green)] shrink-0 mt-1" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
+              {jobData.responsibilities && jobData.responsibilities.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-white mb-4">Responsibilities</h2>
+                  <ul className="space-y-4">
+                    {jobData.responsibilities.map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 text-gray-300">
+                        <CheckCircle size={20} className="text-[color:var(--vibrant-green)] shrink-0 mt-1" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
             </div>
 
             <div className="lg:col-span-1">

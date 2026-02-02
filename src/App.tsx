@@ -58,7 +58,7 @@ export function App() {
 
           {/* Blog Routes */}
           <Route path="/blog" element={<BlogPage />} />
-          <Route path="/blog/:slug" element={<BlogDetailPage />} />
+          <Route path="/blog/:id" element={<BlogDetailPage />} />
 
           {/* Service Routes */}
           <Route path="/services" element={<ServicesPage />} />
