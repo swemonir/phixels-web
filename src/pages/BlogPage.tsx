@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Share2, Clock, CheckCircle, X, Loader2, User } from 'lucide-react';
+import { Search, Share2, Calendar, Clock, CheckCircle, X, Loader2, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { apiService } from '../services/api';
@@ -10,11 +10,15 @@ export function BlogPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [showShareTooltip, setShowShareTooltip] = useState<string | null>(null);
-  const [subscriptionEmail, setSubscriptionEmail] = useState('');
-  const [subscriptionStatus, setSubscriptionStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  // Newsletter States
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [newsletterError, setNewsletterError] = useState('');
+  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -39,14 +43,68 @@ export function BlogPage() {
   const categories = ['All', ...new Set(blogs.flatMap(blog => blog.tags).filter(Boolean))];
 
   const filteredPosts = blogs.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.details.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.details.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || post.tags.includes(selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
-  const featuredPost = filteredPosts[0];
-  const regularPosts = filteredPosts.slice(1);
+  const featuredPost = filteredPosts.length > 0 ? filteredPosts[0] : null;
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (newsletterSubscribed) return;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newsletterEmail)) {
+      setNewsletterError('Please enter a valid email address.');
+      return;
+    }
+
+    setNewsletterLoading(true);
+    setNewsletterError('');
+
+    try {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbzYH-TfT_uR-2uxR8G2my7KElsR_x0f9GekGO35oSqq-qXkjI8k1zPSRvbIrATJDCg/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          formType: 'newsletter',
+          email: newsletterEmail
+        })
+      });
+
+      const text = await response.text();
+
+      if (text.includes('already_subscribed') || text.toLowerCase().includes('already')) {
+        setNewsletterError('This email is already subscribed.');
+        setNewsletterLoading(false);
+        return;
+      }
+
+      setShowSuccessModal(true);
+      setNewsletterSubscribed(true);
+      setNewsletterEmail('');
+
+      setTimeout(() => {
+        setShowSuccessModal(false);
+      }, 3000);
+
+    } catch (error) {
+      console.error(error);
+      // Falling back to success modal as per the user's logic (similar to Footer)
+      setShowSuccessModal(true);
+      setNewsletterSubscribed(true);
+      setNewsletterEmail('');
+
+      setTimeout(() => {
+        setShowSuccessModal(false);
+      }, 3000);
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
 
   const handleShare = async (e: React.MouseEvent, title: string, id: string) => {
     e.preventDefault();
@@ -59,216 +117,259 @@ export function BlogPage() {
       }
     } else {
       await navigator.clipboard.writeText(url);
-      setShowShareTooltip(id);
-      setTimeout(() => setShowShareTooltip(null), 2000);
+      // Note: User's UI didn't have a specific "Copied!" tooltip in this version, 
+      // but I'll keep the logic simple or just rely on the native share.
     }
   };
 
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!subscriptionEmail) return;
-    setSubscriptionStatus('loading');
-    try {
-      const response = await fetch('https://script.google.com/macros/s/AKfycbyHjclWf7_B68FWhlU8K4h1H-G_p-eT-Yvj_p_Yj_p_Yj_p_Yj_p/exec', {
-        method: 'POST',
-        body: JSON.stringify({ email: subscriptionEmail, type: 'newsletter' })
-      });
-      if (response.ok) {
-        setSubscriptionStatus('success');
-        setSubscriptionEmail('');
-      } else {
-        setSubscriptionStatus('error');
-      }
-    } catch (err) {
-      setSubscriptionStatus('error');
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center pt-20">
+        <Loader2 className="w-12 h-12 text-[color:var(--bright-red)] animate-spin mb-4" />
+        <p className="text-gray-400">Loading insights...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center pt-20 p-4">
+        <div className="text-center py-20 text-red-500 bg-red-500/10 rounded-2xl border border-red-500/20 max-w-2xl w-full">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <main className="bg-[#050505] min-h-screen pt-40 pb-20">
+    <main className="bg-[#050505] min-h-screen pt-44 pb-20">
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccessModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowSuccessModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center relative"
+            >
+              <button onClick={() => setShowSuccessModal(false)} className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors">
+                <X size={20} className="text-gray-400" />
+              </button>
+
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[color:var(--vibrant-green)]/20 flex items-center justify-center">
+                <CheckCircle className="w-8 h-8 text-[color:var(--vibrant-green)]" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Thank You!</h3>
+              <p className="text-gray-400">
+                You've successfully subscribed to our newsletter. Stay tuned for the latest updates!
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="max-w-4xl mx-auto text-center mb-16">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-bold mb-6"
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-block mb-6 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-[color:var(--bright-red)] font-mono"
           >
-            Our <span className="text-gradient">Blog</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-xl text-gray-400"
-          >
-            Insights, tutorials, and updates from the Phixels team.
-          </motion.p>
+            Our Blog
+          </motion.div>
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            Insights & <span className="text-gradient">Thoughts</span>
+          </h1>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Deep dives into engineering, design, and the future of technology.
+          </p>
         </div>
 
-        {/* Filters & Search */}
-        <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between">
-          <div className="flex flex-wrap gap-2">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCategory === cat
-                  ? 'bg-[color:var(--bright-red)] text-white'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                  }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-12 pr-6 text-white focus:outline-none focus:border-[color:var(--bright-red)] transition-colors"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
-              >
-                <X size={18} />
-              </button>
-            )}
-          </div>
-        </div>
+        {/* Featured Post */}
+        {selectedCategory === 'All' && !searchTerm && featuredPost && (
+          <Link to={`/blog/${featuredPost._id}`}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-20 relative rounded-3xl overflow-hidden group cursor-pointer"
+            >
+              <div className="absolute inset-0">
+                <img
+                  src={featuredPost.image}
+                  alt={featuredPost.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+              </div>
+              <div className="relative z-10 p-8 md:p-16 flex flex-col justify-end min-h-[500px]">
+                <span className="inline-block px-4 py-1 rounded-full bg-[color:var(--bright-red)] text-white text-sm font-bold mb-4 w-fit">
+                  Featured
+                </span>
+                <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 max-w-4xl group-hover:text-[color:var(--neon-yellow)] transition-colors">
+                  {featuredPost.title}
+                </h2>
+                <p className="text-xl text-gray-300 max-w-2xl mb-8 line-clamp-2">
+                  {featuredPost.details}
+                </p>
+                <div className="flex items-center gap-6 text-gray-400">
+                  <span className="flex items-center gap-2">
+                    <Calendar size={18} /> {new Date(featuredPost.createdAt).toLocaleDateString()}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Clock size={18} /> {featuredPost.readingTime} read
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </Link>
+        )}
 
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-[color:var(--bright-red)] animate-spin mb-4" />
-            <p className="text-gray-400">Loading articles...</p>
-          </div>
-        ) : error ? (
-          <div className="text-center py-20 text-red-500 bg-red-500/10 rounded-2xl border border-red-500/20">
-            {error}
-          </div>
-        ) : (
-          <div className="space-y-16">
-            {/* Featured Post */}
-            {featuredPost && selectedCategory === 'All' && !searchQuery && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="group relative rounded-3xl overflow-hidden border border-white/10 bg-white/5"
-              >
-                <Link to={`/blog/${featuredPost._id}`} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="aspect-video lg:aspect-square overflow-hidden">
-                    <img
-                      src={featuredPost.image}
-                      alt={featuredPost.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-8 md:p-12 flex flex-col justify-center">
-                    <div className="flex items-center gap-4 mb-6">
-                      <span className="px-3 py-1 rounded-full bg-[color:var(--bright-red)] text-white text-xs font-bold uppercase tracking-wider">
-                        Featured
-                      </span>
-                      {featuredPost.tags[0] && (
-                        <span className="text-gray-500 text-sm">{featuredPost.tags[0]}</span>
-                      )}
-                    </div>
-                    <h2 className="text-3xl md:text-5xl font-bold mb-6 group-hover:text-[color:var(--bright-red)] transition-colors">
-                      {featuredPost.title}
-                    </h2>
-                    <p className="text-gray-400 text-lg mb-8 line-clamp-3">
-                      {featuredPost.details.substring(0, 150)}...
-                    </p>
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
-                          <User size={24} className="text-gray-400" />
-                        </div>
-                        <div>
-                          <div className="text-white font-bold">{featuredPost.writer}</div>
-                          <div className="text-gray-500 text-sm">
-                            {new Date(featuredPost.createdAt).toLocaleDateString()} • {featuredPost.readingTime}
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={(e) => handleShare(e, featuredPost.title, featuredPost._id)}
-                        className="p-3 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                      >
-                        <Share2 size={20} />
-                      </button>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            )}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+          {/* Sidebar */}
+          <div className="lg:col-span-1 space-y-8 h-fit lg:sticky lg:top-32">
+            {/* Search */}
+            <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="w-full bg-black border border-white/20 rounded-lg pl-10 pr-4 py-3 text-white focus:border-[color:var(--bright-red)] focus:outline-none transition-colors"
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+              </div>
+            </div>
 
-            {/* Post Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <AnimatePresence mode="popLayout">
-                {regularPosts.map((post, index) => (
-                  <motion.div
-                    key={post._id}
-                    layout
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="group flex flex-col bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all"
+            {/* Categories */}
+            <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+              <h3 className="text-lg font-bold text-white mb-4">Categories</h3>
+              <ul className="space-y-2">
+                {categories.map(cat => (
+                  <li
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`cursor-pointer flex justify-between items-center p-2 rounded-lg transition-colors ${selectedCategory === cat ? 'bg-[color:var(--bright-red)] text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
                   >
-                    <Link to={`/blog/${post._id}`} className="aspect-video overflow-hidden">
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </Link>
-                    <div className="p-6 flex flex-col flex-1">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-[color:var(--bright-red)] text-xs font-bold uppercase tracking-wider">
-                          {post.tags[0] || 'Articles'}
-                        </span>
-                        <div className="flex items-center gap-2 text-gray-500 text-xs">
-                          <Clock size={14} />
-                          {post.readingTime}
+                    <span>{cat}</span>
+                    {cat !== 'All' && (
+                      <span className="text-xs bg-black/20 px-2 py-1 rounded">
+                        {blogs.filter(p => p.tags.includes(cat)).length}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Newsletter Subscription Box */}
+            <div className="bg-gradient-to-br from-[color:var(--deep-navy)] to-black p-6 rounded-2xl border border-white/10">
+              <h3 className="text-lg font-bold text-white mb-2">Subscribe</h3>
+              <p className="text-sm text-gray-400 mb-4">
+                Get the latest tech insights delivered to your inbox.
+              </p>
+
+              <form onSubmit={handleNewsletterSubmit}>
+                <input
+                  type="email"
+                  value={newsletterEmail}
+                  onChange={e => {
+                    setNewsletterEmail(e.target.value);
+                    setNewsletterError('');
+                  }}
+                  placeholder="Enter your email"
+                  className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2 text-white mb-2 focus:outline-none focus:border-[color:var(--bright-red)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  required
+                  disabled={newsletterSubscribed}
+                />
+
+                {newsletterError && <p className="text-red-400 text-sm mb-2">{newsletterError}</p>}
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  variant="primary"
+                  disabled={newsletterLoading || newsletterSubscribed}
+                >
+                  {newsletterSubscribed
+                    ? 'Subscribed'
+                    : newsletterLoading
+                      ? 'Subscribing...'
+                      : 'Subscribe'}
+                </Button>
+              </form>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <AnimatePresence mode="popLayout">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {filteredPosts.map(post => (
+                  <motion.article
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    key={post._id}
+                    className="group bg-white/5 rounded-2xl border border-white/10 overflow-hidden hover:border-[color:var(--bright-red)] transition-all duration-300 flex flex-col"
+                  >
+                    <Link to={`/blog/${post._id}`} className="flex-1 flex flex-col">
+                      <div className="relative aspect-video overflow-hidden bg-gray-800">
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-xs font-bold border border-white/10">
+                            {post.tags[0] || 'Article'}
+                          </span>
                         </div>
                       </div>
-                      <Link to={`/blog/${post._id}`}>
-                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[color:var(--bright-red)] transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
-                      </Link>
-                      <p className="text-gray-400 text-sm mb-6 line-clamp-2">
-                        {post.details.substring(0, 100)}...
-                      </p>
-                      <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+
+                      <div className="p-6 flex-1 flex flex-col">
+                        <div className="flex items-center gap-3 mb-4">
                           <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
                             <User size={16} className="text-gray-400" />
                           </div>
                           <span className="text-gray-300 text-sm">{post.writer}</span>
                         </div>
-                        <button
-                          onClick={(e) => handleShare(e, post.title, post._id)}
-                          className="text-gray-500 hover:text-white transition-colors relative"
-                        >
-                          <Share2 size={18} />
-                          {showShareTooltip === post._id && (
-                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white text-black text-[10px] font-bold rounded">
-                              Copied!
-                            </span>
-                          )}
-                        </button>
+                        <h2 className="text-xl font-bold text-white mb-3 group-hover:text-[color:var(--neon-yellow)] transition-colors line-clamp-2">
+                          {post.title}
+                        </h2>
+                        <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">
+                          {post.details}
+                        </p>
+
+                        <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
+                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                            <span>{post.readingTime} read</span>
+                          </div>
+                          <button
+                            onClick={e => handleShare(e, post.title, post._id)}
+                            className="text-gray-500 hover:text-white transition-colors"
+                          >
+                            <Share2 size={16} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
+                    </Link>
+                  </motion.article>
                 ))}
-              </AnimatePresence>
-            </div>
+              </div>
+            </AnimatePresence>
 
             {filteredPosts.length === 0 && (
               <div className="text-center py-20 text-gray-500">
@@ -276,53 +377,7 @@ export function BlogPage() {
               </div>
             )}
           </div>
-        )}
-
-        {/* Newsletter */}
-        <section className="mt-32 max-w-4xl mx-auto">
-          <div className="relative rounded-3xl p-8 md:p-12 overflow-hidden bg-gradient-to-br from-[color:var(--bright-red)] to-[color:var(--deep-navy)]">
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Stay in the loop
-                </h2>
-                <p className="text-white/80 text-lg">
-                  Get the latest insights, tutorials, and team updates delivered straight to your inbox.
-                </p>
-              </div>
-              <form onSubmit={handleSubscribe} className="flex flex-col gap-4">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={subscriptionEmail}
-                    onChange={(e) => setSubscriptionEmail(e.target.value)}
-                    className="flex-1 bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder:text-white/50 focus:outline-none focus:bg-white/20 transition-all"
-                    required
-                  />
-                  <Button
-                    variant="primary"
-                    className="bg-white text-black hover:bg-gray-100 px-8 py-4 font-bold"
-                    disabled={subscriptionStatus === 'loading'}
-                  >
-                    {subscriptionStatus === 'loading' ? 'Subscribing...' : 'Subscribe'}
-                  </Button>
-                </div>
-                {subscriptionStatus === 'success' && (
-                  <div className="flex items-center gap-2 text-white font-medium">
-                    <CheckCircle size={20} /> Thanks for subscribing!
-                  </div>
-                )}
-                {subscriptionStatus === 'error' && (
-                  <div className="text-white/90 text-sm font-medium">
-                    Something went wrong. Please try again.
-                  </div>
-                )}
-              </form>
-            </div>
-          </div>
-        </section>
+        </div>
       </div>
     </main>
   );

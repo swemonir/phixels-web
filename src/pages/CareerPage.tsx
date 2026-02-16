@@ -16,6 +16,7 @@ export function CareerPage() {
       try {
         setLoading(true);
         const response = await apiService.getCareers();
+        console.log(response);
         if (response.success) {
           setRoles(response.data);
         } else {

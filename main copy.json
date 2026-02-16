@@ -1136,6 +1136,300 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Track Events",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventType\": \"page_view\",\n  \"sessionId\": \"uuid\",\n  \"pagePath\": \"/\",\n  \"referrer\": \"\",\n  \"utmSource\": \"\",\n  \"utmMedium\": \"\",\n  \"utmCampaign\": \"\",\n  \"deviceType\": \"desktop\",\n  \"channel\": \"whatsapp\",\n  \"metadata\": {},\n  \"eventAt\": \"2026-02-03T12:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/analytics/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "events"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Analytics events recorded\",\n  \"data\": {\n    \"inserted\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/overview?range=all",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "overview"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "all",
+                  "description": "range=1h|1d|3d|7d|1m|3m|6m|1y|all"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Analytics overview retrieved\",\n  \"data\": {\n    \"totalVisits\": 12450,\n    \"conversions\": 520,\n    \"bounceRate\": 42.3,\n    \"avgDuration\": 204,\n    \"totalLeads\": 142,\n    \"pendingLeads\": 28,\n    \"bookedLeads\": 114,\n    \"conversionRate\": 80.2,\n    \"realtimeUsers\": 42,\n    \"clickCounts\": {\n      \"gmail\": 32,\n      \"whatsapp\": 58,\n      \"fiverr\": 14,\n      \"linkedin\": 21,\n      \"facebook\": 9,\n      \"emailOpens\": 12\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Overview (Custom Range)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/overview?start=2026-01-01&end=2026-02-03",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "overview"],
+              "query": [
+                {
+                  "key": "start",
+                  "value": "2026-01-01"
+                },
+                {
+                  "key": "end",
+                  "value": "2026-02-03"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Analytics overview retrieved\",\n  \"data\": {\n    \"totalVisits\": 980,\n    \"conversions\": 42,\n    \"bounceRate\": 38.5,\n    \"avgDuration\": 210,\n    \"totalLeads\": 35,\n    \"pendingLeads\": 8,\n    \"bookedLeads\": 27,\n    \"conversionRate\": 77.1,\n    \"realtimeUsers\": 12,\n    \"clickCounts\": {\n      \"gmail\": 5,\n      \"whatsapp\": 11,\n      \"fiverr\": 2,\n      \"linkedin\": 4,\n      \"facebook\": 1,\n      \"emailOpens\": 3\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Realtime",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/realtime",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "realtime"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Realtime analytics retrieved\",\n  \"data\": {\n    \"activeUsers\": 8,\n    \"deviceCounts\": {\"desktop\": 4, \"mobile\": 3, \"tablet\": 1},\n    \"pageCounts\": {\"/\": 3, \"/contact\": 2},\n    \"liveEvents\": [\n      {\"event\": \"Page View: /\", \"location\": \"Dhaka, BD\", \"device\": \"mobile\", \"time\": \"Just now\", \"activity\": \"page view\"}\n    ]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Funnel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/funnel?range=all",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "funnel"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "all",
+                  "description": "range=1h|1d|3d|7d|1m|3m|6m|1y|all"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Funnel analytics retrieved\",\n  \"data\": [\n    {\"stage\": \"popup_open\", \"users\": 1000, \"rate\": 100},\n    {\"stage\": \"lead_submitted\", \"users\": 140, \"rate\": 14.0, \"dropoff\": 86.0},\n    {\"stage\": \"meeting_started\", \"users\": 90, \"rate\": 64.3, \"dropoff\": 35.7},\n    {\"stage\": \"meeting_booked\", \"users\": 75, \"rate\": 83.3, \"dropoff\": 16.7}\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Traffic Series",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/traffic?range=7d",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "traffic"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "7d"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Traffic series retrieved\",\n  \"data\": [\n    {\"name\": \"2026-02-01\", \"visitors\": 120, \"conversions\": 8},\n    {\"name\": \"2026-02-02\", \"visitors\": 140, \"conversions\": 10}\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Top Pages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/top-pages?range=7d",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "top-pages"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "7d"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Top pages retrieved\",\n  \"data\": [\n    {\"path\": \"/\", \"visits\": 320, \"avgTime\": null, \"bounce\": null, \"conversions\": 18},\n    {\"path\": \"/contact\", \"visits\": 120, \"avgTime\": null, \"bounce\": null, \"conversions\": 7}\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Top Cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/top-cities?range=7d",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "top-cities"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "7d"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Top cities retrieved\",\n  \"data\": [\n    {\"name\": \"Dhaka\", \"country\": \"BD\", \"visitors\": 140},\n    {\"name\": \"New York\", \"country\": \"US\", \"visitors\": 90}\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Top Countries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/top-countries?range=7d",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "top-countries"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "7d"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Top countries retrieved\",\n  \"data\": [\n    {\"code\": \"BD\", \"name\": \"BD\", \"visitors\": 200, \"conversions\": 22, \"rate\": 11.0, \"trend\": \"neutral\"},\n    {\"code\": \"US\", \"name\": \"US\", \"visitors\": 120, \"conversions\": 10, \"rate\": 8.3, \"trend\": \"neutral\"}\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Devices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/devices?range=7d",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "devices"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "7d"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Device breakdown retrieved\",\n  \"data\": {\"desktop\": 340, \"mobile\": 220, \"tablet\": 40}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Traffic Sources",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/traffic-sources?range=7d",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "traffic-sources"],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "7d"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Traffic sources retrieved\",\n  \"data\": [\n    {\"name\": \"Direct\", \"visitors\": 420, \"share\": 35.0, \"conversions\": 12, \"conversionRate\": 2.9, \"trend\": 0},\n    {\"name\": \"Organic Search\", \"visitors\": 360, \"share\": 30.0, \"conversions\": 16, \"conversionRate\": 4.4, \"trend\": 0}\n  ]\n}"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

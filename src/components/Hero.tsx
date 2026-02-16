@@ -9,7 +9,6 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "./ui/Button";
 import { ArrowRight, Play } from "lucide-react";
-import Mouse from "./ui/Mouse";
 function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Star, Users, Download, TrendingUp, ArrowRight, Loader2, Globe, Laptop, Smartphone } from 'lucide-react';
 import { Button } from '../components/ui/Button';
@@ -12,8 +12,6 @@ export function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
-
-  const { scrollY } = useScroll();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -128,7 +126,6 @@ export function ProductsPage() {
           <div className="text-sm text-gray-400">{stat.label}</div>
         </motion.div>)}
       </motion.div>
-
       {/* Category Filter */}
       {!loading && !error && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex flex-wrap justify-center gap-3 mb-16">
@@ -219,7 +216,6 @@ export function ProductsPage() {
           })}
         </div>
       )}
-
       {/* CTA Section - Classic Style */}
       <motion.div initial={{
         opacity: 0,
@@ -246,5 +242,5 @@ export function ProductsPage() {
         </div>
       </motion.div>
     </div>
-  </main >;
+  </main >
 }

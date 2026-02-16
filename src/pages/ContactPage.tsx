@@ -49,8 +49,6 @@ export function ContactPage() {
 
   const [error, setError] = useState('');
 
-  const GAS_DEPLOYMENT_URL = 'https://script.google.com/macros/s/AKfycbzYH-TfT_uR-2uxR8G2my7KElsR_x0f9GekGO35oSqq-qXkjI8k1zPSRvbIrATJDCg/exec';
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = 'Full Name is required';
@@ -318,6 +316,12 @@ export function ContactPage() {
                     </p>
                   )}
                 </div>
+
+                {error && (
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm text-center mb-6">
+                    {error}
+                  </div>
+                )}
 
                 <Button type="submit" variant="primary" glow className="w-full py-4 text-lg" disabled={submitting}>
                   {submitting ? 'Sending...' : <span className="flex items-center justify-center gap-2">

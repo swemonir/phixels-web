@@ -48,7 +48,7 @@ export function ProfessionalReviewCarousel() {
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.02}
-                onDragEnd={(e, { offset }) => {
+                onDragEnd={(_, { offset }) => {
                   const swipeThreshold = 10;
                   if (offset.x < -swipeThreshold) {
                     setCurrentIndex((prev) => (prev + 1) % Review.length);
